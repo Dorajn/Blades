@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "260295575754",
+    "project_id": "blades-9293f",
+    "storage_bucket": "blades-9293f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:260295575754:android:b66c14ccae82e78b7fcc33",
+        "android_client_info": {
+          "package_name": "com.app.blades"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAJPTvkzmYJBIqVTmxdwPibUcrNkugWm1Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
