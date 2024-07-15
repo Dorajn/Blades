@@ -1,10 +1,105 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Register">
+    tools:context=".Login"
+    style="@style/SCREEN">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="70dp"
+        android:layout_centerInParent="true"
+        >
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Register"
+            android:textSize="25dp"
+            android:layout_centerHorizontal="true"
+            android:id="@+id/registerText"
+            android:layout_marginTop="100dp"
+            style="@style/TEXT"/>
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Nick"
+            android:layout_below="@+id/registerText"
+            android:layout_marginTop="50dp"
+            android:id="@+id/editTextNick"
+            android:drawableStart="@drawable/img_person"
+            android:drawablePadding="10dp"
+            android:background="@drawable/custom_input"
+            android:paddingEnd="12dp"
+            android:paddingStart="12dp"
+            android:inputType="text"
+            style="@style/EDIT_TEXT"/>
+
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Email"
+            android:layout_below="@+id/editTextNick"
+            android:layout_marginTop="10dp"
+            android:id="@+id/editTextEmail"
+            android:drawableStart="@drawable/img_email"
+            android:drawablePadding="10dp"
+            android:background="@drawable/custom_input"
+            android:paddingEnd="12dp"
+            android:paddingStart="12dp"
+            android:inputType="textEmailAddress"
+            style="@style/EDIT_TEXT"/>
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Password"
+            android:layout_below="@+id/editTextEmail"
+            android:layout_marginTop="10dp"
+            android:id="@+id/editTextPass"
+            android:drawableStart="@drawable/img_password"
+            android:drawablePadding="10dp"
+            android:background="@drawable/custom_input"
+            android:paddingEnd="12dp"
+            android:paddingStart="12dp"
+            android:inputType="textPassword"
+            style="@style/EDIT_TEXT"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Login"
+            android:textSize="15dp"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@+id/createAccountButton"
+            android:id="@+id/switchToLogin"
+            android:layout_marginTop="30dp"
+            android:textColor="#BBBBBB"
+            android:textStyle="bold"
+            />
+
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/editTextPass"
+            android:layout_marginTop="35dp"
+            android:text="create account"
+            android:background="@drawable/rounded_button"
+            android:id="@+id/createAccountButton"
+            style="@style/BUTTON"/>
+
+
+
+
+    </RelativeLayout>
+
+</RelativeLayout>

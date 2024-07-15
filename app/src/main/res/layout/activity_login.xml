@@ -27,28 +27,14 @@
             android:layout_marginTop="100dp"
             style="@style/TEXT"/>
 
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Nick"
-            android:layout_below="@+id/loginText"
-            android:layout_marginTop="50dp"
-            android:id="@+id/editTextLogin"
-            android:drawableStart="@drawable/img_person"
-            android:drawablePadding="10dp"
-            android:background="@drawable/custom_input"
-            android:paddingEnd="12dp"
-            android:paddingStart="12dp"
-            android:inputType="text"
-            style="@style/EDIT_TEXT"/>
 
 
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Email"
-            android:layout_below="@+id/editTextLogin"
-            android:layout_marginTop="10dp"
+            android:layout_below="@+id/loginText"
+            android:layout_marginTop="50dp"
             android:id="@+id/editTextEmail"
             android:drawableStart="@drawable/img_email"
             android:drawablePadding="10dp"
@@ -80,7 +66,7 @@
             android:textSize="15dp"
             android:layout_centerHorizontal="true"
             android:layout_below="@+id/loginButton"
-            android:id="@+id/create_account"
+            android:id="@+id/switchToRegister"
             android:layout_marginTop="30dp"
             android:textColor="#BBBBBB"
             android:textStyle="bold"
