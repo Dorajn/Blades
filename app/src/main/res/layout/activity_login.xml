@@ -13,7 +13,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="70dp"
-        android:layout_centerInParent="true">
+        android:layout_centerInParent="true"
+        >
 
 
         <TextView
@@ -31,16 +32,16 @@
             android:layout_height="wrap_content"
             android:hint="Nick"
             android:layout_below="@+id/loginText"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="50dp"
             android:id="@+id/editTextLogin"
             android:drawableStart="@drawable/img_person"
             android:drawablePadding="10dp"
             android:background="@drawable/custom_input"
             android:paddingEnd="12dp"
             android:paddingStart="12dp"
-
+            android:inputType="text"
             style="@style/EDIT_TEXT"/>
-/>
+
 
         <EditText
             android:layout_width="match_parent"
@@ -54,6 +55,7 @@
             android:background="@drawable/custom_input"
             android:paddingEnd="12dp"
             android:paddingStart="12dp"
+            android:inputType="textEmailAddress"
             style="@style/EDIT_TEXT"/>
 
         <EditText
@@ -68,7 +70,21 @@
             android:background="@drawable/custom_input"
             android:paddingEnd="12dp"
             android:paddingStart="12dp"
+            android:inputType="textPassword"
             style="@style/EDIT_TEXT"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Create account"
+            android:textSize="15dp"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@+id/loginButton"
+            android:id="@+id/create_account"
+            android:layout_marginTop="30dp"
+            android:textColor="#BBBBBB"
+            android:textStyle="bold"
+            />
 
 
         <androidx.appcompat.widget.AppCompatButton
@@ -78,6 +94,7 @@
             android:layout_marginTop="35dp"
             android:text="LOGIN"
             android:background="@drawable/rounded_button"
+            android:id="@+id/loginButton"
             style="@style/BUTTON"/>
 
 
