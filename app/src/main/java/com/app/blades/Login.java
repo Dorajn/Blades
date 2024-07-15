@@ -6,6 +6,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,13 +29,14 @@ public class Login extends AppCompatActivity {
     Button loginButton;
     FirebaseAuth mAuth;
     TextView switchToRegister;
+    ProgressBar progressBar;
 
     @Override
     public void onStart() {
         super.onStart();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if(currentUser != null){
-            Intent intent = new Intent(getApplicationContext(), Register.class);
+            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
             startActivity(intent);
             finish();
         }
@@ -50,6 +52,7 @@ public class Login extends AppCompatActivity {
         inputPassword = findViewById(R.id.editTextPass);
         loginButton =findViewById(R.id.loginButton);
         switchToRegister = findViewById(R.id.switchToRegister);
+        progressBar = findViewById(R.id.progressBar);
 
         switchToRegister.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -64,6 +67,8 @@ public class Login extends AppCompatActivity {
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                progressBar.setVisibility(View.VISIBLE);
 
                 String email, password;
                 email = inputEmail.getText().toString();
@@ -82,6 +87,7 @@ public class Login extends AppCompatActivity {
                         .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
+                                progressBar.setVisibility(View.GONE);
                                 if (task.isSuccessful()) {
                                     Toast.makeText(Login.this, "Login successful.", Toast.LENGTH_SHORT).show();
 

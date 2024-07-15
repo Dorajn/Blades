@@ -6,6 +6,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,13 +30,14 @@ public class Register extends AppCompatActivity {
     Button registerButton;
     FirebaseAuth mAuth;
     TextView switchToLogin;
+    ProgressBar progressBar;
 
     @Override
     public void onStart() {
         super.onStart();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if(currentUser != null){
-            Intent intent = new Intent(getApplicationContext(), Register.class);
+            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
             startActivity(intent);
             finish();
         }
@@ -53,6 +55,7 @@ public class Register extends AppCompatActivity {
         inputPassword = findViewById(R.id.editTextPass);
         registerButton =findViewById(R.id.createAccountButton);
         switchToLogin = findViewById(R.id.switchToLogin);
+        progressBar = findViewById(R.id.progressBar);
 
         switchToLogin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -72,6 +75,8 @@ public class Register extends AppCompatActivity {
                 password = inputPassword.getText().toString();
                 nick = inputNick.getText().toString();
 
+                progressBar.setVisibility(View.VISIBLE);
+
                 if(TextUtils.isEmpty(email)){
                     Toast.makeText(Register.this, "Enter email", Toast.LENGTH_SHORT).show();
                     return;
@@ -90,8 +95,12 @@ public class Register extends AppCompatActivity {
                         .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
+                                progressBar.setVisibility(View.GONE);
                                 if (task.isSuccessful()) {
                                     Toast.makeText(Register.this, "Account created.", Toast.LENGTH_SHORT).show();
+                                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                                    startActivity(intent);
+                                    finish();
                                 }
                                 else {
                                     Toast.makeText(Register.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
