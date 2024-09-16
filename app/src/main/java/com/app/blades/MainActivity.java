@@ -17,7 +17,7 @@ public class MainActivity extends AppCompatActivity {
     FirebaseAuth auth;
     Button logoutButton;
     FirebaseUser user;
-    TextView userEmail;
+    Button addCarButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
 
         auth = FirebaseAuth.getInstance();
         logoutButton = findViewById(R.id.logoutButton);
-        userEmail = findViewById(R.id.userEmail);
+        addCarButton = findViewById(R.id.addCarButton);
 
         user = auth.getCurrentUser();
 
@@ -36,10 +36,17 @@ public class MainActivity extends AppCompatActivity {
             finish();
         }
         else{
-            if(user.getEmail() != null) {
-                userEmail.setText(user.getEmail().toString());
-            }
+            //pass
         }
+
+        addCarButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), Cars.class);
+                startActivity(intent);
+                finish();
+            }
+        });
 
         logoutButton.setOnClickListener(new View.OnClickListener() {
             @Override

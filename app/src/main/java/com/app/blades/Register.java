@@ -75,8 +75,6 @@ public class Register extends AppCompatActivity {
                 password = inputPassword.getText().toString();
                 nick = inputNick.getText().toString();
 
-                progressBar.setVisibility(View.VISIBLE);
-
                 if(TextUtils.isEmpty(email)){
                     Toast.makeText(Register.this, "Enter email", Toast.LENGTH_SHORT).show();
                     return;
@@ -90,7 +88,12 @@ public class Register extends AppCompatActivity {
                     return;
                 }
 
+                if(password.length() < 8){
+                    Toast.makeText(Register.this, "Password should be at least 8 characters", Toast.LENGTH_LONG).show();
+                    return;
+                }
 
+                progressBar.setVisibility(View.VISIBLE);
                 mAuth.createUserWithEmailAndPassword(email, password)
                         .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                             @Override

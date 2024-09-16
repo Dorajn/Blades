@@ -12,21 +12,14 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:text="Welcome"
+        android:layout_marginTop="280dp"
+        android:layout_centerHorizontal="true"
+        android:text="Add your first car"
         style="@style/TEXT"
         android:textStyle="bold"
         android:textSize="20dp"
-        android:id="@+id/welcomeMessage"/>
+        android:id="@+id/addingText"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:layout_below="@id/welcomeMessage"
-        android:textColor="#BBB"
-        android:textSize="16dp"
-        android:id="@+id/userEmail"/>
 
     <androidx.appcompat.widget.AppCompatButton
         android:layout_width="match_parent"
@@ -37,8 +30,21 @@
         android:text="logout"
         android:background="@drawable/rounded_button"
         android:id="@+id/logoutButton"
-
         style="@style/BUTTON"/>
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:id="@+id/addCarButton"
+        android:text="+"
+        android:layout_below="@+id/addingText"
+        android:background="@drawable/rounded_button"
+        style="@style/PLUS_BUTTON"
+        />
+
+
 
 
 </RelativeLayout>
