@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Login"
+    style="@style/SCREEN">
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerHorizontal="true"
+        android:layout_centerInParent="true"
+        android:layout_above="@+id/changeCarButton"
+        android:layout_margin="20dp"
+        android:background="@drawable/rounded_car_info"
+        >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Create your vehicle"
+            android:textSize="25dp"
+            android:layout_centerHorizontal="true"
+            android:id="@+id/cvtext"
+            android:layout_marginTop="30dp"
+            android:textColor="@color/ultra_light_gray"
+            android:textStyle="bold"
+            />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Vehicle name"
+            android:layout_below="@+id/cvtext"
+            android:layout_marginTop="40dp"
+            android:layout_marginHorizontal="30dp"
+            android:id="@+id/editTextVehicleName"
+            android:drawableStart="@drawable/baseline_directions_car_24"
+            android:drawablePadding="10dp"
+            android:background="@drawable/custom_input"
+            android:paddingEnd="12dp"
+            android:paddingStart="12dp"
+            style="@style/EDIT_TEXT"/>
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Mileage"
+            android:layout_below="@+id/editTextVehicleName"
+            android:layout_marginTop="10dp"
+            android:layout_marginHorizontal="30dp"
+            android:id="@+id/editTextVehicleMileage"
+            android:drawableStart="@drawable/baseline_speed_24"
+            android:drawablePadding="10dp"
+            android:background="@drawable/custom_input"
+            android:paddingEnd="12dp"
+            android:paddingStart="12dp"
+            style="@style/EDIT_TEXT"/>
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Current fuel level (in liters)"
+            android:layout_below="@+id/editTextVehicleMileage"
+            android:layout_marginTop="10dp"
+            android:layout_marginHorizontal="30dp"
+            android:id="@+id/editTextVehiclePetrol"
+            android:drawableStart="@drawable/baseline_local_gas_station_24"
+            android:drawablePadding="10dp"
+            android:background="@drawable/custom_input"
+            android:paddingEnd="12dp"
+            android:paddingStart="12dp"
+            style="@style/EDIT_TEXT"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentBottom="true"
+            android:layout_margin="20dp"
+            android:text="create vehicle"
+            android:background="@drawable/rounded_button"
+            android:id="@+id/createVB"
+            style="@style/BUTTON"/>
+
+
+    </RelativeLayout>
+
+
+</RelativeLayout>

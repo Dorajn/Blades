@@ -8,6 +8,17 @@
     tools:context=".Login"
     style="@style/SCREEN">
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="50dp"
+        android:layout_centerHorizontal="true"
+        android:text="Hello Noname"
+        style="@style/TEXT"
+        android:textStyle="bold"
+        android:textSize="20dp"
+        android:id="@+id/hiText"/>
 
     <TextView
         android:layout_width="wrap_content"

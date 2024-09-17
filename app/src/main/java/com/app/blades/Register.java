@@ -3,6 +3,7 @@ package com.app.blades;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -18,11 +19,19 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 public class Register extends AppCompatActivity {
 
@@ -31,6 +40,8 @@ public class Register extends AppCompatActivity {
     FirebaseAuth mAuth;
     TextView switchToLogin;
     ProgressBar progressBar;
+    FirebaseFirestore fStore;
+    String userID;
 
     @Override
     public void onStart() {
@@ -49,13 +60,17 @@ public class Register extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
+        //firebase variables
         mAuth = FirebaseAuth.getInstance();
+        fStore = FirebaseFirestore.getInstance();
+
         inputEmail = findViewById(R.id.editTextEmail);
         inputNick = findViewById(R.id.editTextNick);
         inputPassword = findViewById(R.id.editTextPass);
         registerButton =findViewById(R.id.createAccountButton);
         switchToLogin = findViewById(R.id.switchToLogin);
         progressBar = findViewById(R.id.progressBar);
+
 
         switchToLogin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -101,6 +116,17 @@ public class Register extends AppCompatActivity {
                                 progressBar.setVisibility(View.GONE);
                                 if (task.isSuccessful()) {
                                     Toast.makeText(Register.this, "Account created.", Toast.LENGTH_SHORT).show();
+
+                                    //inserting data to firebase
+                                    userID = Objects.requireNonNull(mAuth.getCurrentUser()).getUid();
+                                    DocumentReference documentReference = fStore.collection("users").document(userID);
+                                    Map<String, Object> user = new HashMap<>();
+
+                                    user.put("nick", nick);
+                                    user.put("email", email);
+
+                                    documentReference.set(user).addOnSuccessListener(unused -> Log.d("Firestore", "Document successfully written!")).addOnFailureListener(e -> Log.e("FirestoreError", "Error writing document", e));
+
                                     Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                                     startActivity(intent);
                                     finish();
