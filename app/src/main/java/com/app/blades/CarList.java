@@ -1,6 +1,7 @@
 package com.app.blades;
 
 import android.os.Bundle;
+import android.view.View;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
@@ -17,34 +18,36 @@ import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 
-public class Cars extends AppCompatActivity {
+public class CarList extends AppCompatActivity {
 
-    TextView vehicleName, vehicleMileage, vehicleFuelLevel;
-    FirebaseFirestore fStore;
-    FirebaseAuth auth;
+    TextView car;
     String userID;
+    FirebaseAuth auth;
+    FirebaseFirestore fStore;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_cars);
+        setContentView(R.layout.activity_car_list);
 
-        vehicleName = findViewById(R.id.carName);
-        vehicleMileage = findViewById(R.id.mileage);
-        vehicleFuelLevel = findViewById(R.id.petrolLevel);
-
-        fStore = FirebaseFirestore.getInstance();
         auth = FirebaseAuth.getInstance();
-
+        fStore = FirebaseFirestore.getInstance();
+        car = findViewById(R.id.firstCar);
 
         userID = auth.getCurrentUser().getUid();
         DocumentReference documentReference = fStore.collection("vehicles").document(userID);
         documentReference.addSnapshotListener(this, new EventListener<DocumentSnapshot>() {
             @Override
             public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
-                vehicleName.setText(value.getString("vehicleName"));
-                vehicleMileage.setText("Mileage: " + value.getString("mileage"));
-                vehicleFuelLevel.setText("Fuel: " + value.getString("fuelLevel"));
+                car.setText(value.getString("vehicleName"));
+            }
+        });
+
+
+        car.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
             }
         });
 

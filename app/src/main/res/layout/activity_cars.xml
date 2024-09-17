@@ -31,6 +31,47 @@
             android:textStyle="bold"
             />
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Mileage:"
+            android:drawableStart="@drawable/baseline_speed_24"
+            android:drawablePadding="10dp"
+            android:textSize="20dp"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/carName"
+            android:id="@+id/mileage"
+            android:layout_marginTop="40dp"
+            android:textColor="@color/ultra_light_gray"
+            android:textStyle="bold"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Fuel:"
+            android:textSize="20dp"
+            android:drawableStart="@drawable/baseline_local_gas_station_24"
+            android:drawablePadding="10dp"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/mileage"
+            android:id="@+id/petrolLevel"
+            android:layout_marginTop="10dp"
+            android:textColor="@color/ultra_light_gray"
+            android:textStyle="bold"
+            />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentBottom="true"
+            android:layout_margin="20dp"
+            android:text="track my ride"
+            android:background="@drawable/track_ride_button"
+            android:id="@+id/trackRideButton"
+            style="@style/TRACK_BUTTON"/>
+
 
     </RelativeLayout>
 

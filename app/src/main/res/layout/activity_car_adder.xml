@@ -14,7 +14,6 @@
         android:layout_height="match_parent"
         android:layout_centerHorizontal="true"
         android:layout_centerInParent="true"
-        android:layout_above="@+id/changeCarButton"
         android:layout_margin="20dp"
         android:background="@drawable/rounded_car_info"
         >
