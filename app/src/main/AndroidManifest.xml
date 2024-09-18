@@ -18,6 +18,11 @@
             android:name=".CarList"
             android:exported="false" />
         <activity
+            android:name=".ScrollingActivity"
+            android:exported="false"
+            android:label="@string/title_activity_scrolling"
+            android:theme="@style/Theme.Blades.NoActionBar" />
+        <activity
             android:name=".CarAdder"
             android:exported="false" />
         <activity

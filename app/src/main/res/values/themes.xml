@@ -14,10 +14,14 @@
     <style name="CAR">
         <item name="android:background">@color/light_gray</item>
     </style>
-    
+
     <style name="TEXT">
         <item name="android:textColor">#BBBBBB</item>
         <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="VEHICLE_NAME_TEXT">
+        <item name="android:textColor">#BBBBBB</item>
     </style>
 
     <style name="BUTTON">
@@ -44,6 +48,15 @@
         <item name="android:textColor">#BBBBBB</item>
         <item name="android:textStyle">bold</item>
     </style>
+
+    <style name="Theme.Blades.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="Theme.Blades.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="Theme.Blades.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
 
 </resources>

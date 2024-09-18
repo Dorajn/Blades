@@ -1,5 +1,7 @@
 package com.app.blades;
 
+import static android.content.ContentValues.TAG;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -26,8 +28,15 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.AggregateQuery;
+import com.google.firebase.firestore.AggregateQuerySnapshot;
+import com.google.firebase.firestore.AggregateSource;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -40,32 +49,53 @@ public class Register extends AppCompatActivity {
     FirebaseAuth mAuth;
     TextView switchToLogin;
     ProgressBar progressBar;
-    FirebaseFirestore fStore;
+    FirebaseFirestore db;
     String userID;
 
     @Override
     public void onStart() {
         super.onStart();
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        if(currentUser != null){
-
-
-
-            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-            startActivity(intent);
-            finish();
-        }
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        //firebase variables
+        db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
-        fStore = FirebaseFirestore.getInstance();
+
+        //intent change
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if(currentUser != null){
+
+            userID = mAuth.getCurrentUser().getUid();
+
+            DocumentReference userData = db.collection("users").document(userID);
+            userData.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    DocumentSnapshot document = task.getResult();
+                    if(document.exists()){
+                        Long vehicleCount = document.getLong("vehicleCount");
+
+                        if(vehicleCount > 0){
+                            Intent intent = new Intent(getApplicationContext(), CarList.class);
+                            startActivity(intent);
+                            finish();
+                        }
+                        else{
+                            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                            startActivity(intent);
+                            finish();
+                        }
+                    }
+
+                }
+            });
+
+        }
+
 
         inputEmail = findViewById(R.id.editTextEmail);
         inputNick = findViewById(R.id.editTextNick);
@@ -117,18 +147,19 @@ public class Register extends AppCompatActivity {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 progressBar.setVisibility(View.GONE);
+
                                 if (task.isSuccessful()) {
                                     Toast.makeText(Register.this, "Account created.", Toast.LENGTH_SHORT).show();
 
                                     //inserting data to firebase
-                                    userID = Objects.requireNonNull(mAuth.getCurrentUser()).getUid();
-                                    DocumentReference documentReference = fStore.collection("users").document(userID);
                                     Map<String, Object> user = new HashMap<>();
-
                                     user.put("nick", nick);
                                     user.put("email", email);
+                                    user.put("vehicleCount", 0);
 
-                                    documentReference.set(user).addOnSuccessListener(unused -> Log.d("Firestore", "Document successfully written!")).addOnFailureListener(e -> Log.e("FirestoreError", "Error writing document", e));
+                                    userID = mAuth.getCurrentUser().getUid();
+                                    db.collection("users").document(userID).set(user);
+
 
                                     Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                                     startActivity(intent);
@@ -139,8 +170,6 @@ public class Register extends AppCompatActivity {
                                 }
                             }
                         });
-
-
             }
         });
     }

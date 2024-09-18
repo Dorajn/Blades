@@ -1,6 +1,9 @@
 package com.app.blades;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
@@ -10,6 +13,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.google.android.material.badge.BadgeUtils;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -23,6 +27,26 @@ public class Cars extends AppCompatActivity {
     FirebaseFirestore fStore;
     FirebaseAuth auth;
     String userID;
+    Button changeCar;
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        userID = auth.getCurrentUser().getUid();
+        DocumentReference documentReference = fStore.collection("vehicles").document(userID);
+
+
+        documentReference.addSnapshotListener(this, new EventListener<DocumentSnapshot>() {
+            @Override
+            public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
+                vehicleName.setText(value.getString("vehicleName"));
+                vehicleMileage.setText("Mileage: " + value.getString("mileage"));
+                vehicleFuelLevel.setText("Fuel: " + value.getString("fuelLevel"));
+            }
+        });
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,16 +59,14 @@ public class Cars extends AppCompatActivity {
 
         fStore = FirebaseFirestore.getInstance();
         auth = FirebaseAuth.getInstance();
+        changeCar = findViewById(R.id.changeCarButton);
 
-
-        userID = auth.getCurrentUser().getUid();
-        DocumentReference documentReference = fStore.collection("vehicles").document(userID);
-        documentReference.addSnapshotListener(this, new EventListener<DocumentSnapshot>() {
+        changeCar.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
-                vehicleName.setText(value.getString("vehicleName"));
-                vehicleMileage.setText("Mileage: " + value.getString("mileage"));
-                vehicleFuelLevel.setText("Fuel: " + value.getString("fuelLevel"));
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), CarList.class);
+                startActivity(intent);
+                finish();
             }
         });
 

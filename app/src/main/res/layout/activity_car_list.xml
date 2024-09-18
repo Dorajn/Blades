@@ -1,57 +1,184 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".CarList">
+    tools:context=".Login"
+    style="@style/SCREEN">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="50dp"
+        android:layout_centerHorizontal="true"
+        android:text="Hello Noname"
+        style="@style/TEXT"
+        android:textStyle="bold"
+        android:textSize="22dp"
+        android:id="@+id/hiText"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/hiText"
+        android:layout_centerHorizontal="true"
+        android:text="Vehicles list:"
+        android:layout_marginTop="10dp"
+        style="@style/TEXT"
+        android:textStyle="bold"
+        android:textSize="20dp"
+        android:id="@+id/addingText"/>
 
     <RelativeLayout
-        android:id="@+id/main"
-        style="@style/SCREEN"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context=".Login">
+        android:layout_height="wrap_content"
+        android:layout_below="@id/addingText"
+        android:layout_marginTop="50dp"
+        android:layout_marginHorizontal="50dp"
+        android:id="@+id/tile1"
+        android:background="@drawable/vehicle_tile">
 
         <TextView
-            android:id="@+id/hiText"
-            style="@style/TEXT"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="50dp"
-            android:text="Hello Noname"
+            android:text="Vehicle Name"
+            style="@style/VEHICLE_NAME_TEXT"
             android:textSize="20dp"
-            android:textStyle="bold" />
+            android:padding="10dp"
 
-
-        <TextView
-            android:id="@+id/firstCar"
-            style="@style/TEXT"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_below="@id/hiText"
-            android:layout_marginTop="50dp"
-            android:text="vehicle name"
-            android:textSize="18dp"
-            android:textStyle="bold" />
-
-
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/logoutButton"
-            style="@style/BUTTON"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:layout_margin="20dp"
-            android:background="@drawable/rounded_button"
-            android:text="logout" />
-
-
+            android:id="@+id/vehicle1"
+            />
 
     </RelativeLayout>
-</androidx.constraintlayout.widget.ConstraintLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tile1"
+        android:layout_marginTop="20dp"
+        android:layout_marginHorizontal="50dp"
+        android:id="@+id/tile2"
+        android:background="@drawable/vehicle_tile"
+        android:visibility="invisible">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:text="Vehicle Name"
+            style="@style/VEHICLE_NAME_TEXT"
+            android:textSize="20dp"
+            android:padding="10dp"
+            android:id="@+id/vehicle2"
+            />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tile2"
+        android:layout_marginTop="20dp"
+        android:layout_marginHorizontal="50dp"
+        android:id="@+id/tile3"
+        android:background="@drawable/vehicle_tile"
+        android:visibility="invisible">
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:text="Vehicle Name"
+            style="@style/VEHICLE_NAME_TEXT"
+            android:textSize="20dp"
+            android:padding="10dp"
+            android:id="@+id/vehicle3"
+            />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tile3"
+        android:layout_marginTop="20dp"
+        android:layout_marginHorizontal="50dp"
+        android:id="@+id/tile4"
+        android:background="@drawable/vehicle_tile"
+        android:visibility="invisible">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:text="Vehicle Name"
+            style="@style/VEHICLE_NAME_TEXT"
+            android:textSize="20dp"
+            android:padding="10dp"
+            android:id="@+id/vehicle4"
+            />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tile4"
+        android:layout_marginTop="20dp"
+        android:layout_marginHorizontal="50dp"
+        android:id="@+id/tile5"
+        android:background="@drawable/vehicle_tile"
+        android:visibility="invisible">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:text="Vehicle Name"
+            style="@style/VEHICLE_NAME_TEXT"
+            android:textSize="20dp"
+            android:padding="10dp"
+            android:id="@+id/vehicle5"
+            />
+
+    </RelativeLayout>
+
+
+
+
+
+
+
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="20dp"
+        android:text="logout"
+        android:background="@drawable/rounded_button"
+        android:id="@+id/logoutButton"
+        style="@style/BUTTON"/>
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="20dp"
+        android:id="@+id/addCarButton2"
+        android:text="+"
+        android:layout_above="@+id/logoutButton"
+        android:background="@drawable/rounded_button"
+        style="@style/PLUS_BUTTON"
+        />
+
+
+
+
+</RelativeLayout>
