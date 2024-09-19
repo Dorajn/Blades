@@ -61,6 +61,8 @@
             android:textStyle="bold"
             />
 
+
+
         <androidx.appcompat.widget.AppCompatButton
             android:layout_width="match_parent"
             android:layout_height="80dp"
@@ -70,7 +72,20 @@
             android:text="track my ride"
             android:background="@drawable/track_ride_button"
             android:id="@+id/trackRideButton"
-            style="@style/TRACK_BUTTON"/>
+            style="@style/TRACK_BUTTON"
+            android:visibility="visible"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentBottom="true"
+            android:layout_margin="20dp"
+            android:text="end my ride"
+            android:background="@drawable/end_tracking_button"
+            android:id="@+id/endOfTracking"
+            style="@style/TRACK_BUTTON"
+            android:visibility="invisible"/>
 
 
     </RelativeLayout>

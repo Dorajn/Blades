@@ -49,6 +49,7 @@ public class CarAdder extends AppCompatActivity {
                 String petrol = inputVehicleCurrFuelLevel.getText().toString();
 
                 addDataToDataBase(vName, mileage, petrol);
+                LocalStorage.carNum += 1;
 
                 Intent intent = new Intent(getApplicationContext(), Car.class);
                 startActivity(intent);
@@ -77,9 +78,17 @@ public class CarAdder extends AppCompatActivity {
         goBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), CarList.class);
-                startActivity(intent);
-                finish();
+
+                if(LocalStorage.carNum > 0){
+                    Intent intent = new Intent(getApplicationContext(), CarList.class);
+                    startActivity(intent);
+                    finish();
+                }
+                else{
+                    Intent intent = new Intent(getApplicationContext(), noCarsPage.class);
+                    startActivity(intent);
+                    finish();
+                }
             }
         });
 
@@ -125,7 +134,7 @@ public class CarAdder extends AppCompatActivity {
                                 Log.e(TAG, "Błąd przy aktualizacji liczby pojazdów: ", e);
                             });
 
-                    CurrentCar.value = 1;
+                    LocalStorage.value = 1;
                 }
 
             }

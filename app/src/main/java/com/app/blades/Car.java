@@ -24,7 +24,7 @@ public class Car extends AppCompatActivity {
     FirebaseFirestore db;
     FirebaseAuth auth;
     String userID;
-    Button changeCar;
+    Button changeCar, trackRide, endTracking;
 
     @Override
     protected void onStart() {
@@ -44,7 +44,7 @@ public class Car extends AppCompatActivity {
 
                             for (QueryDocumentSnapshot document : task.getResult()) {
 
-                                if(i == CurrentCar.value) {
+                                if(i == LocalStorage.value) {
 
                                     String name = (String) document.getData().get("vehicleName");
                                     String mileage = (String) document.getData().get("mileage");
@@ -76,6 +76,8 @@ public class Car extends AppCompatActivity {
         vehicleName = findViewById(R.id.carName);
         vehicleMileage = findViewById(R.id.mileage);
         vehicleFuelLevel = findViewById(R.id.petrolLevel);
+        trackRide = findViewById(R.id.trackRideButton);
+        endTracking = findViewById(R.id.endOfTracking);
 
         db = FirebaseFirestore.getInstance();
         auth = FirebaseAuth.getInstance();
@@ -91,6 +93,24 @@ public class Car extends AppCompatActivity {
                 finish();
             }
         });
+
+        trackRide.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                trackRide.setVisibility(View.INVISIBLE);
+                endTracking.setVisibility(View.VISIBLE);
+            }
+        });
+
+        endTracking.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                endTracking.setVisibility(View.INVISIBLE);
+                trackRide.setVisibility(View.VISIBLE);
+            }
+        });
+
+
 
     }
 }
