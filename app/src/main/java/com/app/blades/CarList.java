@@ -139,7 +139,10 @@ public class CarList extends AppCompatActivity {
                                 String name = (String)document.getData().get("vehicleName");
                                 vehicleNames[i].setText(name);
                                 i++;
+                                Log.d("NazwaKafelka", name);
+
                             }
+                            Log.d("NazwaKafelka", "-----");
                         }
                         else{
                             Log.e("nie", "Error getting documents: ", task.getException());
