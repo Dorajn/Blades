@@ -18,12 +18,12 @@
         style="@style/TEXT"
         android:textStyle="bold"
         android:textSize="22dp"
-        android:id="@+id/hiText"/>
+        android:id="@+id/hiText2"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/hiText"
+        android:layout_below="@id/hiText2"
         android:layout_centerHorizontal="true"
         android:text="Vehicles list:"
         android:layout_marginTop="10dp"
@@ -163,7 +163,7 @@
         android:layout_margin="20dp"
         android:text="logout"
         android:background="@drawable/rounded_button"
-        android:id="@+id/logoutButton"
+        android:id="@+id/logoutButton2"
         style="@style/BUTTON"/>
 
     <androidx.appcompat.widget.AppCompatButton
@@ -173,7 +173,7 @@
         android:layout_marginBottom="20dp"
         android:id="@+id/addCarButton2"
         android:text="+"
-        android:layout_above="@+id/logoutButton"
+        android:layout_above="@+id/logoutButton2"
         android:background="@drawable/rounded_button"
         style="@style/PLUS_BUTTON"
         />

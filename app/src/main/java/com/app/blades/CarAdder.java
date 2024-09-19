@@ -5,18 +5,13 @@ import static android.content.ContentValues.TAG;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.FrameStats;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -27,24 +22,42 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 public class CarAdder extends AppCompatActivity {
 
     EditText inputVehicleName;
     EditText inputVehicleMileage;
     EditText inputVehicleCurrFuelLevel;
-    Button createVehicle;
+    Button createVehicle, goBack;
     String userID;
 
     FirebaseAuth mAuth;
     FirebaseFirestore db;
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        createVehicle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                String vName = inputVehicleName.getText().toString();
+                String mileage = inputVehicleMileage.getText().toString();
+                String petrol = inputVehicleCurrFuelLevel.getText().toString();
+
+                addDataToDataBase(vName, mileage, petrol);
+
+                Intent intent = new Intent(getApplicationContext(), Car.class);
+                startActivity(intent);
+                finish();
+
+            }
+        });
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,26 +68,18 @@ public class CarAdder extends AppCompatActivity {
         inputVehicleMileage = findViewById(R.id.editTextVehicleMileage);
         inputVehicleCurrFuelLevel = findViewById(R.id.editTextVehiclePetrol);
         createVehicle = findViewById(R.id.createVB);
+        goBack = findViewById(R.id.goBack);
 
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
 
-        createVehicle.setOnClickListener(new View.OnClickListener() {
+        goBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-
-                String vName = inputVehicleName.getText().toString();
-                String mileage = inputVehicleMileage.getText().toString();
-                String petrol = inputVehicleCurrFuelLevel.getText().toString();
-
-                addDataToDataBase(vName, mileage, petrol);
-
-                Intent intent = new Intent(getApplicationContext(), Cars.class);
+                Intent intent = new Intent(getApplicationContext(), CarList.class);
                 startActivity(intent);
                 finish();
-
             }
         });
 
@@ -119,6 +124,8 @@ public class CarAdder extends AppCompatActivity {
                             .addOnFailureListener(e -> {
                                 Log.e(TAG, "Błąd przy aktualizacji liczby pojazdów: ", e);
                             });
+
+                    CurrentCar.value = 1;
                 }
 
             }
