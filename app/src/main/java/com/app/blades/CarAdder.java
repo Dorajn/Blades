@@ -110,6 +110,7 @@ public class CarAdder extends AppCompatActivity {
                     @Override
                     public void onSuccess(DocumentReference documentReference) {
                         Toast.makeText(CarAdder.this, "Vehicle created.", Toast.LENGTH_SHORT).show();
+                        LocalStorage.tileMenager.add(documentReference.getId());
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {

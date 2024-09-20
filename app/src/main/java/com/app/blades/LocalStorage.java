@@ -7,12 +7,11 @@ public class LocalStorage {
 
     public static long value;
     public static long carNum;
-    public static ArrayList<String> tileMenager;
+    public static ArrayList<String> tileMenager = new ArrayList<>();
 
     public LocalStorage(){
         value = 1;
         carNum = 0;
-        tileMenager = new ArrayList<>();
     }
 
 }
