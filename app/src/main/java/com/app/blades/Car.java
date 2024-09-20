@@ -11,8 +11,10 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -30,41 +32,38 @@ public class Car extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
+        String vehicleUID;
+        if(LocalStorage.newAddedCar){
+            vehicleUID = LocalStorage.currentNewVehicleUID;
+        }
+        else{
+            vehicleUID = LocalStorage.currentVehicleUID;
+        }
+
+
         db.collection("vehicles")
                 .document(userID)
                 .collection("vehicles")
+                .document(vehicleUID)
                 .get(Source.SERVER)
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    public void onSuccess(DocumentSnapshot document) {
+                        if(document.exists()){
+                            String name = (String) document.getData().get("vehicleName");
+                            String mileage = (String) document.getData().get("mileage");
+                            String fuelLevel = (String) document.getData().get("fuelLevel");
 
-                        if(task.isSuccessful()){
-
-                            int i = 1;
-
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-
-                                if(i == LocalStorage.value) {
-
-                                    String name = (String) document.getData().get("vehicleName");
-                                    String mileage = (String) document.getData().get("mileage");
-                                    String fuelLevel = (String) document.getData().get("fuelLevel");
-
-                                    vehicleName.setText(name);
-                                    vehicleMileage.setText(mileage);
-                                    vehicleFuelLevel.setText(fuelLevel);
-
-                                    break;
-                                }
-                                i++;
-
-                            }
+                            vehicleName.setText(name);
+                            vehicleMileage.setText(mileage);
+                            vehicleFuelLevel.setText(fuelLevel);
                         }
                         else{
-                            Log.e("nie", "Error getting documents: ", task.getException());
+                            Log.d("FireStore", "Vehicle not found.");
                         }
                     }
                 });
+
 
     }
 

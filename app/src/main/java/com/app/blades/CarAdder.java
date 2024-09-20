@@ -50,12 +50,6 @@ public class CarAdder extends AppCompatActivity {
                 String petrol = inputVehicleCurrFuelLevel.getText().toString();
 
                 addDataToDataBase(vName, mileage, petrol);
-                LocalStorage.carNum += 1;
-                LocalStorage.value = 1;
-
-                Intent intent = new Intent(getApplicationContext(), Car.class);
-                startActivity(intent);
-                finish();
 
             }
         });
@@ -110,7 +104,40 @@ public class CarAdder extends AppCompatActivity {
                     @Override
                     public void onSuccess(DocumentReference documentReference) {
                         Toast.makeText(CarAdder.this, "Vehicle created.", Toast.LENGTH_SHORT).show();
-                        LocalStorage.tileMenager.add(documentReference.getId());
+                        LocalStorage.currentNewVehicleUID = documentReference.getId();
+
+
+                        DocumentReference userData = db.collection("users").document(userID);
+                        userData.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                DocumentSnapshot document = task.getResult();
+                                if(document.exists()){
+
+                                    Long vehicleCount = document.getLong("vehicleCount");
+
+                                    userData.update("vehicleCount", (vehicleCount + 1))
+                                            .addOnSuccessListener(aVoid -> {
+                                                Log.d(TAG, "Liczba pojazdów zaktualizowana pomyślnie.");
+                                            })
+                                            .addOnFailureListener(e -> {
+                                                Log.e(TAG, "Błąd przy aktualizacji liczby pojazdów: ", e);
+                                            });
+
+                                    LocalStorage.value = 1;
+                                }
+
+                            }
+                        });
+
+                        LocalStorage.carNum += 1;
+                        LocalStorage.value = 1;
+                        LocalStorage.newAddedCar = true;
+
+                        Intent intent = new Intent(getApplicationContext(), Car.class);
+                        startActivity(intent);
+                        finish();
+
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -120,28 +147,7 @@ public class CarAdder extends AppCompatActivity {
                     }
                 });
 
-        DocumentReference userData = db.collection("users").document(userID);
-        userData.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                DocumentSnapshot document = task.getResult();
-                if(document.exists()){
 
-                    Long vehicleCount = document.getLong("vehicleCount");
-
-                    userData.update("vehicleCount", (vehicleCount + 1))
-                            .addOnSuccessListener(aVoid -> {
-                                Log.d(TAG, "Liczba pojazdów zaktualizowana pomyślnie.");
-                            })
-                            .addOnFailureListener(e -> {
-                                Log.e(TAG, "Błąd przy aktualizacji liczby pojazdów: ", e);
-                            });
-
-                    LocalStorage.value = 1;
-                }
-
-            }
-        });
 
     }
 
