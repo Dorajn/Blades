@@ -112,13 +112,14 @@ public class CarList extends AppCompatActivity {
         });
 
         userID = auth.getCurrentUser().getUid();
-        DocumentReference documentReference = db.collection("users").document(userID);
-        documentReference.addSnapshotListener(this, new EventListener<DocumentSnapshot>() {
-            @Override
-            public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
-                nick.setText("Hi, " + value.getString("nick"));
-            }
-        });
+        db.collection("users")
+                .document(userID)
+                .addSnapshotListener(this, new EventListener<DocumentSnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
+                        nick.setText("Hi, " + value.getString("nick"));
+                    }
+                });
 
     }
 
@@ -127,49 +128,52 @@ public class CarList extends AppCompatActivity {
         super.onStart();
 
         //sets number of tiles visible on screen depending on vehicle counter
-        DocumentReference userData = db.collection("users").document(userID);
-        userData.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                DocumentSnapshot document = task.getResult();
-                if(document.exists()) {
-                    Long vehicleCount = document.getLong("vehicleCount");
-                    vehiclesCount = vehicleCount;
-                    LocalStorage.vehicleCount = vehicleCount;
-                    for (int i = 0; i < vehicleCount; i++) {
-                        tiles[i].setVisibility(View.VISIBLE);
-                    }
+        db.collection("users")
+                .document(userID)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        DocumentSnapshot document = task.getResult();
+                        if(document.exists()) {
+                            Long vehicleCount = document.getLong("vehicleCount");
+                            vehiclesCount = vehicleCount;
+                            LocalStorage.vehicleCount = vehicleCount;
 
-                    //changing vehicle names in tiles
-                    db.collection("vehicles")
-                            .document(userID)
-                            .collection("vehicles")
-                            .get()
-                            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                @Override
-                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            for (int i = 0; i < vehicleCount; i++) {
+                                tiles[i].setVisibility(View.VISIBLE);
+                            }
 
-                                    if(task.isSuccessful()){
-                                        int i = 0;
-                                        for (QueryDocumentSnapshot document : task.getResult()) {
-                                            String name = (String)document.getData().get("vehicleName");
-                                            long fuelLevel = Long.parseLong((String)document.getData().get("fuelLevel"));
-                                            vehicleNames[i].setText(name);
-                                            LocalStorage.UIDs[i] = document.getId();
+                            //changing vehicle names in tiles
+                            db.collection("vehicles")
+                                    .document(userID)
+                                    .collection("vehicles")
+                                    .get()
+                                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
 
-                                            if(fuelLevel <= LocalStorage.lowFuelWarning){
-                                                warnings[i].setVisibility(View.VISIBLE);
+                                            if(task.isSuccessful()){
+                                                int i = 0;
+                                                for (QueryDocumentSnapshot document : task.getResult()) {
+                                                    String name = (String)document.getData().get("vehicleName");
+                                                    long fuelLevel = Long.parseLong((String)document.getData().get("fuelLevel"));
+                                                    vehicleNames[i].setText(name);
+                                                    LocalStorage.UIDs[i] = document.getId();
+
+                                                    if(fuelLevel <= LocalStorage.lowFuelWarning){
+                                                        warnings[i].setVisibility(View.VISIBLE);
+                                                    }
+
+                                                    i++;
+
+                                                }
                                             }
-
-                                            i++;
-
+                                            else{
+                                                Log.e("nie", "Error getting documents: ", task.getException());
+                                            }
                                         }
-                                    }
-                                    else{
-                                        Log.e("nie", "Error getting documents: ", task.getException());
-                                    }
-                                }
-                            });
+                                    });
 
                 }
 

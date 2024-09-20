@@ -53,13 +53,14 @@ public class noCarsPage extends AppCompatActivity {
         }
 
         userID = auth.getCurrentUser().getUid();
-        DocumentReference documentReference = db.collection("users").document(userID);
-        documentReference.addSnapshotListener(this, new EventListener<DocumentSnapshot>() {
-            @Override
-            public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
-                nick.setText("Hi, " + value.getString("nick"));
-            }
-        });
+        db.collection("users")
+                .document(userID)
+                .addSnapshotListener(this, new EventListener<DocumentSnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
+                        nick.setText("Hi, " + value.getString("nick"));
+                    }
+                });
 
 
 

@@ -98,7 +98,9 @@ public class CarAdder extends AppCompatActivity {
 
 
         userID = mAuth.getCurrentUser().getUid();
-        db.collection("vehicles").document(userID).collection("vehicles").add(vehicle)
+        db.collection("vehicles")
+                .document(userID).collection("vehicles")
+                .add(vehicle)
                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                     @Override
                     public void onSuccess(DocumentReference documentReference) {
