@@ -164,6 +164,9 @@ public class CarList extends AppCompatActivity {
                                                     if(fuelLevel <= LocalStorage.lowFuelWarning){
                                                         warnings[i].setVisibility(View.VISIBLE);
                                                     }
+                                                    else{
+                                                        warnings[i].setVisibility(View.INVISIBLE);
+                                                    }
 
                                                     i++;
 

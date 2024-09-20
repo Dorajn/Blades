@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -27,6 +28,7 @@ public class Car extends AppCompatActivity {
     FirebaseAuth auth;
     String userID;
     Button changeCar, trackRide, endTracking;
+    ImageView fuelChange;
 
     @Override
     protected void onStart() {
@@ -54,6 +56,13 @@ public class Car extends AppCompatActivity {
                             String mileage = (String) document.getData().get("mileage");
                             String fuelLevel = (String) document.getData().get("fuelLevel");
 
+                            if(Long.parseLong(fuelLevel) <= LocalStorage.lowFuelWarning){
+                                fuelChange.setImageResource(R.drawable.baseline_local_gas_station_24_red);
+                            }
+                            else{
+                                fuelChange.setImageResource(R.drawable.baseline_local_gas_station_24_white);
+                            }
+
                             vehicleName.setText(name);
                             vehicleMileage.setText(mileage);
                             vehicleFuelLevel.setText(fuelLevel);
@@ -77,6 +86,7 @@ public class Car extends AppCompatActivity {
         vehicleFuelLevel = findViewById(R.id.petrolLevel);
         trackRide = findViewById(R.id.trackRideButton);
         endTracking = findViewById(R.id.endOfTracking);
+        fuelChange = findViewById(R.id.fuelChangeButton);
 
         db = FirebaseFirestore.getInstance();
         auth = FirebaseAuth.getInstance();
