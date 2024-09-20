@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:cardElevation="10dp"
+    app:cardCornerRadius="16dp">
+
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#474747"
+        android:paddingBottom="35dp"
+        >
+
+
+
+        <TextView
+            android:id="@+id/changeMileageText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
+            android:text="change mileage"
+            style="@style/TEXT"
+            android:textStyle="bold"
+            android:textSize="25dp" />
+
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/changeMileageText"
+            android:layout_marginHorizontal="45dp"
+            android:layout_marginTop="20dp">
+
+            <EditText
+                android:id="@+id/mileageEditText"
+                style="@style/EDIT_TEXT"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/custom_input"
+                android:drawableStart="@drawable/baseline_speed_24"
+                android:drawablePadding="10dp"
+                android:hint="mileage"
+                android:inputType="textEmailAddress"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/mileageEditText"
+                android:layout_marginTop="15dp"
+                android:text="ACCEPT"
+                android:background="@drawable/rounded_button"
+                android:id="@+id/loginButton"
+                style="@style/BUTTON"/>
+
+        </RelativeLayout>
+
+
+    </RelativeLayout>
+
+</androidx.cardview.widget.CardView>

@@ -66,7 +66,6 @@
             android:layout_height="60dp"
             android:orientation="horizontal"
             android:layout_above="@id/trackRideButton"
-
             >
 
             <ImageView
@@ -77,7 +76,6 @@
                 android:layout_marginRight="10dp"
                 android:src="@drawable/baseline_local_gas_station_24_white"
                 android:id="@+id/fuelChangeButton"
-                style="@style/TRACK_BUTTON"
                 android:visibility="visible"/>
             <ImageView
                 android:layout_width="50dp"
@@ -86,10 +84,21 @@
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="20dp"
                 android:src="@drawable/baseline_speed_24_white"
-
                 android:id="@+id/mileageChangeButton"
-                style="@style/TRACK_BUTTON"
                 android:visibility="visible"/>
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+            <ImageView
+                android:id="@+id/moreOptions"
+                android:layout_width="50dp"
+                android:layout_height="match_parent"
+                android:layout_marginRight="20dp"
+                android:src="@drawable/baseline_more_vert_24"
+                android:visibility="visible" />
 
 
         </LinearLayout>

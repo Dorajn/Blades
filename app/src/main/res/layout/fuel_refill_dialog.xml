@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:cardElevation="10dp"
+    app:cardCornerRadius="16dp">
+
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#474747"
+        android:paddingBottom="35dp"
+        >
+
+
+
+        <TextView
+            android:id="@+id/fillTheTank"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
+            android:text="fill the tank"
+            style="@style/TEXT"
+            android:textStyle="bold"
+            android:textSize="25dp" />
+
+        <TextView
+            android:id="@+id/textPetrol"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/fillTheTank"
+            android:layout_centerHorizontal="true"
+            android:text="enter the number of liters of petrol in the tank"
+            style="@style/TEXT"
+            android:textSize="13dp"
+
+            />
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/textPetrol"
+            android:layout_marginHorizontal="45dp"
+            android:layout_marginTop="20dp">
+
+            <EditText
+                android:id="@+id/fuelLevelEditText"
+                style="@style/EDIT_TEXT"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/custom_input"
+                android:drawableStart="@drawable/baseline_local_gas_station_24"
+                android:drawablePadding="10dp"
+                android:hint="Fuel level (in liters)"
+                android:inputType="textEmailAddress"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/fuelLevelEditText"
+                android:layout_marginTop="15dp"
+                android:text="ACCEPT"
+                android:background="@drawable/rounded_button"
+                android:id="@+id/loginButton"
+                style="@style/BUTTON"/>
+
+        </RelativeLayout>
+
+
+    </RelativeLayout>
+
+</androidx.cardview.widget.CardView>

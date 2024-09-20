@@ -1,24 +1,21 @@
 package com.app.blades;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.Source;
 
 public class Car extends AppCompatActivity {
@@ -28,7 +25,10 @@ public class Car extends AppCompatActivity {
     FirebaseAuth auth;
     String userID;
     Button changeCar, trackRide, endTracking;
-    ImageView fuelChange;
+    ImageView fuelChange, mileage;
+
+    Dialog dialogFuel, dialogMileage, dialogMore;
+
 
     @Override
     protected void onStart() {
@@ -87,12 +87,37 @@ public class Car extends AppCompatActivity {
         trackRide = findViewById(R.id.trackRideButton);
         endTracking = findViewById(R.id.endOfTracking);
         fuelChange = findViewById(R.id.fuelChangeButton);
+        mileage = findViewById(R.id.mileageChangeButton);
+
+        dialogMileage = new Dialog(Car.this);
+        dialogMileage.setContentView(R.layout.mileage_change_dialog);
+        dialogMileage.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialogMileage.getWindow().setBackgroundDrawable(getDrawable(R.drawable.dialogs_backgroud));
+
+        dialogFuel = new Dialog(Car.this);
+        dialogFuel.setContentView(R.layout.fuel_refill_dialog);
+        dialogFuel.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialogFuel.getWindow().setBackgroundDrawable(getDrawable(R.drawable.dialogs_backgroud));
 
         db = FirebaseFirestore.getInstance();
         auth = FirebaseAuth.getInstance();
         changeCar = findViewById(R.id.changeCarButton);
 
         userID = auth.getCurrentUser().getUid();
+
+        fuelChange.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialogFuel.show();
+            }
+        });
+
+        mileage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialogMileage.show();
+            }
+        });
 
         changeCar.setOnClickListener(new View.OnClickListener() {
             @Override
