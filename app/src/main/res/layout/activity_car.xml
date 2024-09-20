@@ -69,31 +69,24 @@
 
             >
 
-            <androidx.appcompat.widget.AppCompatButton
-                android:layout_width="wrap_content"
+            <ImageView
+                android:layout_width="50dp"
                 android:layout_height="match_parent"
                 android:layout_centerHorizontal="true"
-                android:layout_alignParentLeft="true"
-                android:layout_weight="1"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="10dp"
-                android:background="@drawable/rounded_button"
-                android:scr="@drawable/baseline_local_gas_station_24_white"
-
+                android:src="@drawable/baseline_local_gas_station_24_white"
                 android:id="@+id/fuelChangeButton"
                 style="@style/TRACK_BUTTON"
                 android:visibility="visible"/>
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:layout_width="wrap_content"
+            <ImageView
+                android:layout_width="50dp"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
                 android:layout_centerHorizontal="true"
-                android:layout_alignParentRight="true"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="20dp"
+                android:src="@drawable/baseline_speed_24_white"
 
-                android:background="@drawable/rounded_button"
                 android:id="@+id/mileageChangeButton"
                 style="@style/TRACK_BUTTON"
                 android:visibility="visible"/>
