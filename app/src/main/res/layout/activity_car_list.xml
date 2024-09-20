@@ -41,6 +41,16 @@
         android:id="@+id/tile1"
         android:background="@drawable/vehicle_tile">
 
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/baseline_local_gas_station_24_red"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="15dp"
+            android:visibility="invisible"
+            android:id="@+id/warning1"
+            />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -65,6 +75,16 @@
         android:background="@drawable/vehicle_tile"
         android:visibility="invisible">
 
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/baseline_local_gas_station_24_red"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="15dp"
+            android:visibility="invisible"
+            android:id="@+id/warning2"
+            />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -87,6 +107,16 @@
         android:id="@+id/tile3"
         android:background="@drawable/vehicle_tile"
         android:visibility="invisible">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/baseline_local_gas_station_24_red"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="15dp"
+            android:visibility="invisible"
+            android:id="@+id/warning3"
+            />
 
 
         <TextView
@@ -112,6 +142,16 @@
         android:background="@drawable/vehicle_tile"
         android:visibility="invisible">
 
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/baseline_local_gas_station_24_red"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="15dp"
+            android:visibility="invisible"
+            android:id="@+id/warning4"
+            />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -134,6 +174,16 @@
         android:id="@+id/tile5"
         android:background="@drawable/vehicle_tile"
         android:visibility="invisible">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/baseline_local_gas_station_24_red"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="15dp"
+            android:visibility="invisible"
+            android:id="@+id/warning5"
+            />
 
         <TextView
             android:layout_width="wrap_content"

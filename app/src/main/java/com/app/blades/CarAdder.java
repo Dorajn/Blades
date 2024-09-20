@@ -4,7 +4,6 @@ import static android.content.ContentValues.TAG;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.LocaleList;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -75,7 +74,7 @@ public class CarAdder extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                if(LocalStorage.carNum > 0){
+                if(LocalStorage.vehicleCount > 0){
                     Intent intent = new Intent(getApplicationContext(), CarList.class);
                     startActivity(intent);
                     finish();
@@ -124,14 +123,12 @@ public class CarAdder extends AppCompatActivity {
                                                 Log.e(TAG, "Błąd przy aktualizacji liczby pojazdów: ", e);
                                             });
 
-                                    LocalStorage.value = 1;
                                 }
 
                             }
                         });
 
-                        LocalStorage.carNum += 1;
-                        LocalStorage.value = 1;
+                        LocalStorage.vehicleCount += 1;
                         LocalStorage.newAddedCar = true;
 
                         Intent intent = new Intent(getApplicationContext(), Car.class);

@@ -2,10 +2,10 @@ package com.app.blades;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.LocaleList;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -20,7 +20,6 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -29,8 +28,13 @@ public class CarList extends AppCompatActivity {
     Button addCarButton, logoutButton;
     View tile1, tile2, tile3, tile4, tile5;
     TextView car1, car2, car3, car4, car5;
+    ImageView war1, war2, war3, war4, war5;
+
     View[] tiles;
     TextView[] vehicleNames;
+    ImageView[] warnings;
+
+
     FirebaseAuth auth;
     FirebaseFirestore db;
     String userID;
@@ -60,6 +64,12 @@ public class CarList extends AppCompatActivity {
         car4 = findViewById(R.id.vehicle4);
         car5 = findViewById(R.id.vehicle5);
 
+        war1 = findViewById(R.id.warning1);
+        war2 = findViewById(R.id.warning2);
+        war3 = findViewById(R.id.warning3);
+        war4 = findViewById(R.id.warning4);
+        war5 = findViewById(R.id.warning5);
+
         tiles = new View[5];
         tiles[0] = tile1;
         tiles[1] = tile2;
@@ -73,6 +83,14 @@ public class CarList extends AppCompatActivity {
         vehicleNames[2] = car3;
         vehicleNames[3] = car4;
         vehicleNames[4] = car5;
+
+        warnings = new ImageView[5];
+        warnings[0] = war1;
+        warnings[1] = war2;
+        warnings[2] = war3;
+        warnings[3] = war4;
+        warnings[4] = war5;
+
 
         addCarButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -117,7 +135,7 @@ public class CarList extends AppCompatActivity {
                 if(document.exists()) {
                     Long vehicleCount = document.getLong("vehicleCount");
                     vehiclesCount = vehicleCount;
-                    LocalStorage.carNum = vehicleCount;
+                    LocalStorage.vehicleCount = vehicleCount;
                     for (int i = 0; i < vehicleCount; i++) {
                         tiles[i].setVisibility(View.VISIBLE);
                     }
@@ -135,8 +153,14 @@ public class CarList extends AppCompatActivity {
                                         int i = 0;
                                         for (QueryDocumentSnapshot document : task.getResult()) {
                                             String name = (String)document.getData().get("vehicleName");
+                                            long fuelLevel = Long.parseLong((String)document.getData().get("fuelLevel"));
                                             vehicleNames[i].setText(name);
                                             LocalStorage.UIDs[i] = document.getId();
+
+                                            if(fuelLevel <= LocalStorage.lowFuelWarning){
+                                                warnings[i].setVisibility(View.VISIBLE);
+                                            }
+
                                             i++;
 
                                         }
@@ -159,7 +183,7 @@ public class CarList extends AppCompatActivity {
             public void onClick(View view) {
 
                 LocalStorage.newAddedCar = false;
-                if(LocalStorage.carNum > 0){
+                if(LocalStorage.vehicleCount > 0){
                     LocalStorage.currentVehicleUID = LocalStorage.UIDs[0];
                 }
 
@@ -173,7 +197,7 @@ public class CarList extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 LocalStorage.newAddedCar = false;
-                if(LocalStorage.carNum > 1){
+                if(LocalStorage.vehicleCount > 1){
                     LocalStorage.currentVehicleUID = LocalStorage.UIDs[1];
                 }
                 Intent intent = new Intent(getApplicationContext(), Car.class);
@@ -186,7 +210,7 @@ public class CarList extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 LocalStorage.newAddedCar = false;
-                if(LocalStorage.carNum > 2){
+                if(LocalStorage.vehicleCount > 2){
                     LocalStorage.currentVehicleUID = LocalStorage.UIDs[2];
                 }
                 Intent intent = new Intent(getApplicationContext(), Car.class);
@@ -199,7 +223,7 @@ public class CarList extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 LocalStorage.newAddedCar = false;
-                if(LocalStorage.carNum > 3){
+                if(LocalStorage.vehicleCount > 3){
                     LocalStorage.currentVehicleUID = LocalStorage.UIDs[3];
                 }
                 Intent intent = new Intent(getApplicationContext(), Car.class);
@@ -212,7 +236,7 @@ public class CarList extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 LocalStorage.newAddedCar = false;
-                if(LocalStorage.carNum > 4){
+                if(LocalStorage.vehicleCount > 4){
                     LocalStorage.currentVehicleUID = LocalStorage.UIDs[4];
                 }
                 Intent intent = new Intent(getApplicationContext(), Car.class);

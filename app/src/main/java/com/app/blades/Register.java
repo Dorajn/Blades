@@ -61,7 +61,7 @@ public class Register extends AppCompatActivity {
                     DocumentSnapshot document = task.getResult();
                     if(document.exists()){
                         Long vehicleCount = document.getLong("vehicleCount");
-                        LocalStorage.carNum = vehicleCount;
+                        LocalStorage.vehicleCount = vehicleCount;
 
                         if(vehicleCount > 0){
                             Intent intent = new Intent(getApplicationContext(), CarList.class);
