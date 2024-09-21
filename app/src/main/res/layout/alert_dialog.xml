@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:cardElevation="10dp"
+    app:cardCornerRadius="16dp">
+
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#474747"
+        android:paddingBottom="35dp"
+        >
+
+
+
+        <TextView
+            android:id="@+id/confirmation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
+            android:text="confirmation"
+            android:textColor="@color/cyan"
+            android:textStyle="bold"
+            android:textSize="25dp" />
+
+        <TextView
+            android:id="@+id/askingText1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/confirmation"
+            android:text="Are you sure, you want to dismiss?"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="5dp"
+            style="@style/TEXT"
+            android:textSize="13dp"
+
+            />
+        <TextView
+            android:id="@+id/askingText2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/askingText1"
+            android:text="You will lost all informations about this drive."
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="0dp"
+            style="@style/TEXT"
+            android:textSize="13dp"
+
+            />
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/askingText2"
+            android:orientation="horizontal"
+            android:layout_marginTop="10dp"
+            android:layout_marginHorizontal="50dp">
+
+
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:text="no"
+                android:background="@drawable/dismiss_button"
+                android:id="@+id/no"
+                android:layout_weight="1"
+                android:layout_marginRight="10dp"
+                style="@style/BUTTON"/>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:text="yes"
+                android:background="@drawable/rounded_button"
+                android:layout_marginLeft="10dp"
+                android:id="@+id/yes"
+                android:layout_weight="1"
+                style="@style/BUTTON"/>
+
+        </LinearLayout>
+
+
+    </RelativeLayout>
+
+</androidx.cardview.widget.CardView>

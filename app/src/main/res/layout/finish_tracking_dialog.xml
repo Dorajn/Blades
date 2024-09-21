@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:cardElevation="10dp"
+    app:cardCornerRadius="16dp">
+
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#474747"
+        android:paddingBottom="35dp"
+        >
+
+        <TextView
+            android:id="@+id/finishText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="30dp"
+            android:text="Finished"
+            android:textColor="@color/cyan"
+            android:textStyle="bold"
+            android:textSize="25dp" />
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/finishText"
+            android:layout_marginHorizontal="45dp"
+            android:layout_marginTop="20dp">
+
+            <TextView
+                android:id="@+id/time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="Time: infinity"
+                style="@style/TEXT_STAT"
+                android:textSize="20dp" />
+
+
+            <TextView
+                android:id="@+id/announcement"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="40dp"
+                android:text="Enter current mileage and average fuel consumption in order to process the petrol left in tank."
+                style="@style/TEXT_STAT"
+                android:textSize="16dp"
+                android:layout_below="@id/time"/>
+
+
+            <EditText
+                android:id="@+id/mileageOnFinishEditTextDialog"
+                style="@style/EDIT_TEXT"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/custom_input"
+                android:drawableStart="@drawable/baseline_speed_24"
+                android:drawablePadding="10dp"
+                android:hint="mileage"
+                android:inputType="text"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:layout_marginTop="20dp"
+                android:layout_below="@id/announcement"
+                />
+
+            <EditText
+                android:id="@+id/avgConsumptionEditTextDialog"
+                style="@style/EDIT_TEXT"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/custom_input"
+                android:drawableStart="@drawable/baseline_insert_chart_outlined_24"
+                android:drawablePadding="10dp"
+                android:hint="average fuel consumption"
+                android:inputType="text"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:layout_marginTop="10dp"
+                android:layout_below="@id/mileageOnFinishEditTextDialog"
+                />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/avgConsumptionEditTextDialog"
+                android:layout_marginTop="40dp"
+                android:text="ACCEPT"
+                android:background="@drawable/rounded_button"
+                android:id="@+id/trackAcceptButton"
+                style="@style/BUTTON"/>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/trackAcceptButton"
+                android:layout_marginTop="15dp"
+                android:text="DISMISS"
+                android:background="@drawable/dismiss_button"
+                android:id="@+id/dismiss"
+                style="@style/BUTTON"/>
+
+        </RelativeLayout>
+
+
+    </RelativeLayout>
+
+</androidx.cardview.widget.CardView>

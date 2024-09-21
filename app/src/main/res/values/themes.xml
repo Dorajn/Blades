@@ -20,6 +20,10 @@
         <item name="android:textStyle">bold</item>
     </style>
 
+    <style name="TEXT_STAT">
+        <item name="android:textColor">#BBBBBB</item>
+    </style>
+
     <style name="VEHICLE_NAME_TEXT">
         <item name="android:textColor">#BBBBBB</item>
     </style>
