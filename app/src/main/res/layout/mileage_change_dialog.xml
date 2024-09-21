@@ -37,7 +37,7 @@
             android:layout_marginTop="20dp">
 
             <EditText
-                android:id="@+id/mileageEditText"
+                android:id="@+id/mileageEditTextDialog"
                 style="@style/EDIT_TEXT"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -45,18 +45,18 @@
                 android:drawableStart="@drawable/baseline_speed_24"
                 android:drawablePadding="10dp"
                 android:hint="mileage"
-                android:inputType="textEmailAddress"
+                android:inputType="text"
                 android:paddingStart="12dp"
                 android:paddingEnd="12dp" />
 
             <androidx.appcompat.widget.AppCompatButton
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/mileageEditText"
+                android:layout_below="@id/mileageEditTextDialog"
                 android:layout_marginTop="15dp"
                 android:text="ACCEPT"
                 android:background="@drawable/rounded_button"
-                android:id="@+id/loginButton"
+                android:id="@+id/mileageChangeButtonDialog"
                 style="@style/BUTTON"/>
 
         </RelativeLayout>

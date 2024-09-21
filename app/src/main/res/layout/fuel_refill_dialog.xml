@@ -48,7 +48,7 @@
             android:layout_marginTop="20dp">
 
             <EditText
-                android:id="@+id/fuelLevelEditText"
+                android:id="@+id/fuelLevelEditTextDialog"
                 style="@style/EDIT_TEXT"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -56,18 +56,18 @@
                 android:drawableStart="@drawable/baseline_local_gas_station_24"
                 android:drawablePadding="10dp"
                 android:hint="Fuel level (in liters)"
-                android:inputType="textEmailAddress"
+                android:inputType="text"
                 android:paddingStart="12dp"
                 android:paddingEnd="12dp" />
 
             <androidx.appcompat.widget.AppCompatButton
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/fuelLevelEditText"
+                android:layout_below="@id/fuelLevelEditTextDialog"
                 android:layout_marginTop="15dp"
                 android:text="ACCEPT"
                 android:background="@drawable/rounded_button"
-                android:id="@+id/loginButton"
+                android:id="@+id/fuelAcceptButton"
                 style="@style/BUTTON"/>
 
         </RelativeLayout>
