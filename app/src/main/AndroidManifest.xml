@@ -15,6 +15,9 @@
         android:theme="@style/Theme.Blades"
         tools:targetApi="31">
         <activity
+            android:name=".Settings"
+            android:exported="false" />
+        <activity
             android:name=".CarList"
             android:exported="false" />
         <activity

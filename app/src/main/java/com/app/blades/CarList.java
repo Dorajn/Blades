@@ -28,7 +28,7 @@ public class CarList extends AppCompatActivity {
     Button addCarButton, logoutButton;
     View tile1, tile2, tile3, tile4, tile5;
     TextView car1, car2, car3, car4, car5;
-    ImageView war1, war2, war3, war4, war5;
+    ImageView war1, war2, war3, war4, war5, settings;
 
     View[] tiles;
     TextView[] vehicleNames;
@@ -91,6 +91,16 @@ public class CarList extends AppCompatActivity {
         warnings[3] = war4;
         warnings[4] = war5;
 
+        settings = findViewById(R.id.settings);
+
+        settings.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), Settings.class);
+                startActivity(intent);
+                finish();
+            }
+        });
 
         addCarButton.setOnClickListener(new View.OnClickListener() {
             @Override

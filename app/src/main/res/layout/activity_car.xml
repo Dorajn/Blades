@@ -92,7 +92,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="  00:00:00"
-                android:textSize="30sp"
+                android:textSize="22sp"
                 android:textColor="@color/ultra_light_gray"
                 android:textStyle="bold"
                 android:id="@+id/timer"

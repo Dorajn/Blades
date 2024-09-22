@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Login"
+    style="@style/SCREEN">
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="50dp"
+        android:layout_centerHorizontal="true"
+        android:text="Settings"
+        style="@style/TEXT"
+        android:textStyle="bold"
+        android:textSize="22dp"
+        android:id="@+id/settingsText"/>
+
+
+    <TextView
+        android:id="@+id/fuelPriceInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginHorizontal="30dp"
+        android:layout_marginTop="40dp"
+        android:text="Fuel price: "
+        style="@style/TEXT_STAT"
+        android:textSize="16dp"
+        android:layout_below="@id/settingsText"/>
+
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter new fuel price"
+        android:layout_below="@+id/fuelPriceInfo"
+        android:layout_marginTop="10dp"
+        android:layout_marginHorizontal="30dp"
+        android:id="@+id/editTextFuelPrice"
+        android:drawableStart="@drawable/baseline_attach_money_24"
+        android:drawablePadding="10dp"
+        android:background="@drawable/custom_input"
+        android:paddingEnd="12dp"
+        android:paddingStart="12dp"
+        android:imeOptions="actionDone"
+        style="@style/EDIT_TEXT"/>
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_above="@id/applyButton2"
+        android:layout_marginHorizontal="20dp"
+        android:text="go back"
+        android:background="@drawable/go_back_button"
+        android:id="@+id/goBackSettings"
+        style="@style/BUTTON_GO_BACK"/>
+
+
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="20dp"
+        android:text="apply changes"
+        android:background="@drawable/rounded_button"
+        android:id="@+id/applyButton2"
+        style="@style/BUTTON"/>
+
+
+
+
+
+</RelativeLayout>

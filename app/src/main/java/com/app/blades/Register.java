@@ -141,6 +141,7 @@ public class Register extends AppCompatActivity {
                                     user.put("nick", nick);
                                     user.put("email", email);
                                     user.put("vehicleCount", 0);
+                                    user.put("fuelPrice", 6);
 
                                     userID = mAuth.getCurrentUser().getUid();
                                     db.collection("users").document(userID).set(user);
