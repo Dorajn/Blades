@@ -5,6 +5,7 @@ import static android.content.ContentValues.TAG;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -32,18 +33,21 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Source;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 public class Car extends AppCompatActivity {
 
-    TextView vehicleName, vehicleMileage, vehicleFuelLevel;
+    TextView vehicleName, vehicleMileage, vehicleFuelLevel, cost, timeValue;
     FirebaseFirestore db;
     FirebaseAuth auth;
     String userID;
-    Button changeCar, trackRide, endTracking;
+    Button changeCar, trackRide, endTracking, inactiveButton;
     ImageView fuelChange, mileage;
     EditText fuelLevelEditTextDialog, mileageEditTextDialog, mileageTrackEditText, avgConsumptionEditText;
 
     Dialog dialogFuel, dialogMileage, dialogMore, dialogTrack;
-    Button acceptFuelChange, acceptMileageChange, acceptTrack, dismiss;
+    Button acceptFuelChange, acceptMileageChange, acceptTrack, dismiss, goBack;
     String vehicleUID;
 
     //vehicle stored values
@@ -53,6 +57,12 @@ public class Car extends AppCompatActivity {
     //alert variables
     Button yes, no;
     Dialog alertYesNo;
+
+    //timer
+    TextView timerView;
+    Timer timer;
+    TimerTask timerTask;
+    double time = 0;
 
 
     @Override
@@ -76,6 +86,9 @@ public class Car extends AppCompatActivity {
         fuelChange = findViewById(R.id.fuelChangeButton);
         mileage = findViewById(R.id.mileageChangeButton);
         changeCar = findViewById(R.id.changeCarButton);
+        timerView = findViewById(R.id.timer);
+
+        timer = new Timer();
 
         //dialogs
         dialogMileage = new Dialog(Car.this);
@@ -101,7 +114,12 @@ public class Car extends AppCompatActivity {
 
         Window window = alertYesNo.getWindow();
         if (window != null) {
-            window.setDimAmount(0.8f);  // Ustaw stopień zaciemnienia (0.0 do 1.0)
+            window.setDimAmount(0.8f);
+        }
+
+        Window window2 = dialogTrack.getWindow();
+        if (window2 != null) {
+            window2.setDimAmount(0.8f);
         }
 
         fuelLevelEditTextDialog = dialogFuel.findViewById(R.id.fuelLevelEditTextDialog);
@@ -114,6 +132,10 @@ public class Car extends AppCompatActivity {
         mileageTrackEditText = dialogTrack.findViewById(R.id.mileageOnFinishEditTextDialog);
         acceptTrack = dialogTrack.findViewById(R.id.trackAcceptButton);
         dismiss = dialogTrack.findViewById(R.id.dismiss);
+        cost = dialogTrack.findViewById(R.id.cost);
+        goBack = dialogTrack.findViewById(R.id.trackGoBackButton);
+        inactiveButton = dialogTrack.findViewById(R.id.inactiveButton);
+        timeValue = dialogTrack.findViewById(R.id.time);
 
         yes = alertYesNo.findViewById(R.id.yes);
         no = alertYesNo.findViewById(R.id.no);
@@ -146,6 +168,18 @@ public class Car extends AppCompatActivity {
             }
         });
 
+        goBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialogTrack.dismiss();
+                dismiss.setVisibility(View.VISIBLE);
+                inactiveButton.setVisibility(View.INVISIBLE);
+                acceptTrack.setVisibility(View.VISIBLE);
+                goBack.setVisibility(View.INVISIBLE);
+                resetTrackDialog();
+            }
+        });
+
         acceptTrack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -171,6 +205,8 @@ public class Car extends AppCompatActivity {
                 double fuelUsed = (averageFuelCon * (double)kmDriven) / 100;
                 double fuelLeft = Double.parseDouble(fuelLevelStored) - fuelUsed;
 
+                cost.setText("Cost: " + String.format("%.2f", fuelUsed * LocalStorage.fuelPrice));
+
                 userID = auth.getCurrentUser().getUid();
                 DocumentReference userData = db.collection("vehicles")
                         .document(userID)
@@ -193,9 +229,16 @@ public class Car extends AppCompatActivity {
                             fuelChange.setImageResource(R.drawable.baseline_local_gas_station_24_white);
                         }
 
+                        Toast.makeText(Car.this, "Track saved!", Toast.LENGTH_SHORT).show();
+
                         vehicleMileage.setText(currentMileageAfter);
-                        vehicleFuelLevel.setText(String.valueOf(fuelLeft));
-                        dialogTrack.dismiss();
+                        String fLevel2digits = String.format("%.2f", fuelLeft);
+                        vehicleFuelLevel.setText(String.valueOf(fLevel2digits));
+                        acceptTrack.setVisibility(View.INVISIBLE);
+                        goBack.setVisibility(View.VISIBLE);
+
+                        inactiveButton.setVisibility(View.VISIBLE);
+                        dismiss.setVisibility(View.INVISIBLE);
 
                     }
                 }).addOnFailureListener(new OnFailureListener() {
@@ -212,6 +255,7 @@ public class Car extends AppCompatActivity {
             public void onClick(View view) {
 
                 String newMileage = mileageEditTextDialog.getText().toString();
+                resetMileageChangeDialog();
 
                 userID = auth.getCurrentUser().getUid();
                 DocumentReference userData = db.collection("vehicles")
@@ -260,6 +304,7 @@ public class Car extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 String newFuelLevel = fuelLevelEditTextDialog.getText().toString();
+                resetFuelRefillDialog();
 
                 if(Long.parseLong(newFuelLevel) < 0){
                     Toast.makeText(Car.this, "Fuel level can not be negative value!", Toast.LENGTH_LONG).show();
@@ -280,7 +325,7 @@ public class Car extends AppCompatActivity {
                         Toast.makeText(view.getContext(), "Fuel level changed", Toast.LENGTH_SHORT).show();
                         vehicleFuelLevel.setText(newFuelLevel);
 
-                        if(Long.parseLong(newFuelLevel) <= LocalStorage.lowFuelWarning){
+                        if(Double.parseDouble(newFuelLevel) <= LocalStorage.lowFuelWarning){
                             fuelChange.setImageResource(R.drawable.baseline_local_gas_station_24_red);
                         }
                         else{
@@ -290,6 +335,7 @@ public class Car extends AppCompatActivity {
                             userData.update("fuelLevel", newFuelLevel);
                         }
 
+                        fuelLevelStored = newFuelLevel;
                         dialogFuel.dismiss();
 
                     }
@@ -332,6 +378,7 @@ public class Car extends AppCompatActivity {
             public void onClick(View view) {
                 trackRide.setVisibility(View.INVISIBLE);
                 endTracking.setVisibility(View.VISIBLE);
+                startTimer();
             }
         });
 
@@ -340,7 +387,9 @@ public class Car extends AppCompatActivity {
             public void onClick(View view) {
                 endTracking.setVisibility(View.INVISIBLE);
                 trackRide.setVisibility(View.VISIBLE);
+                timeValue.setText("Time: " + getTimerText());
                 dialogTrack.show();
+                endTimer();
             }
         });
 
@@ -350,6 +399,11 @@ public class Car extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+
+        resetButtons();
+        resetTrackDialog();
+        resetFuelRefillDialog();
+        resetMileageChangeDialog();
 
         if(LocalStorage.newAddedCar){
             vehicleUID = LocalStorage.currentNewVehicleUID;
@@ -372,7 +426,7 @@ public class Car extends AppCompatActivity {
                             mileageStored = (String) document.getData().get("mileage");
                             fuelLevelStored = (String) document.getData().get("fuelLevel");
 
-                            if(Long.parseLong(fuelLevelStored) <= LocalStorage.lowFuelWarning){
+                            if(Double.parseDouble(fuelLevelStored) <= LocalStorage.lowFuelWarning){
                                 fuelChange.setImageResource(R.drawable.baseline_local_gas_station_24_red);
                             }
                             else{
@@ -381,13 +435,75 @@ public class Car extends AppCompatActivity {
 
                             vehicleName.setText(name);
                             vehicleMileage.setText(mileageStored);
-                            vehicleFuelLevel.setText(fuelLevelStored);
+
+                            double fLevel = Double.parseDouble(fuelLevelStored);
+                            String fLevel2digits = String.format("%.2f", fLevel);
+                            vehicleFuelLevel.setText(fLevel2digits);
                         }
                         else{
                             Log.d("FireStore", "Vehicle not found.");
                         }
                     }
                 });
+    }
+
+    public void resetButtons(){
+        dismiss.setVisibility(View.VISIBLE);
+        inactiveButton.setVisibility(View.INVISIBLE);
+        acceptTrack.setVisibility(View.VISIBLE);
+        goBack.setVisibility(View.INVISIBLE);
+    }
+
+    public void resetTrackDialog(){
+        cost.setText("Cost: unknown, enter data");
+        avgConsumptionEditText.setText("");
+        mileageTrackEditText.setText("");
+    }
+
+    public void resetFuelRefillDialog(){
+        fuelLevelEditTextDialog.setText("");
+    }
+
+    public void resetMileageChangeDialog(){
+        mileageEditTextDialog.setText("");
+    }
+
+    private void startTimer(){
+
+        timerTask = new TimerTask() {
+            @Override
+            public void run() {
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        time++;
+                        timerView.setTextColor(Color.parseColor("#bc422d"));
+                        timerView.setText("  " + getTimerText());
+                    }
+                });
+            }
+        };
+        timer.schedule(timerTask, 0, 1000);
+    }
+
+    private String getTimerText() {
+
+        int rounded = (int)Math.round(time);
+
+        int seconds = ((rounded % 86400) % 3600) % 60;
+        int minutes = ((rounded % 86400) % 3600) / 60;
+        int hours = (rounded % 86400) / 3600;
+
+        return String.format("%02d", hours) + ":" + String.format("%02d", minutes) + ":" + String.format("%02d", seconds);
+
+    }
+
+    private void endTimer(){
+        timerView.setTextColor(Color.parseColor("#bbbbbb"));
+        timerTask.cancel();
+        timerView.setText("  00:00:00");
+        time = 0;
     }
 
 }

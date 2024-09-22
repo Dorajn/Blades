@@ -39,6 +39,7 @@
             android:background="@drawable/custom_input"
             android:paddingEnd="12dp"
             android:paddingStart="12dp"
+            android:imeOptions="actionDone"
             android:inputType="text"
             style="@style/EDIT_TEXT"/>
 
@@ -55,6 +56,7 @@
             android:background="@drawable/custom_input"
             android:paddingEnd="12dp"
             android:paddingStart="12dp"
+            android:imeOptions="actionDone"
             android:inputType="textEmailAddress"
             style="@style/EDIT_TEXT"/>
 
@@ -70,6 +72,7 @@
             android:background="@drawable/custom_input"
             android:paddingEnd="12dp"
             android:paddingStart="12dp"
+            android:imeOptions="actionDone"
             android:inputType="textPassword"
             style="@style/EDIT_TEXT"/>
 

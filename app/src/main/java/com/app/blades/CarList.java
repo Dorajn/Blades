@@ -157,7 +157,7 @@ public class CarList extends AppCompatActivity {
                                                 int i = 0;
                                                 for (QueryDocumentSnapshot document : task.getResult()) {
                                                     String name = (String)document.getData().get("vehicleName");
-                                                    long fuelLevel = Long.parseLong((String)document.getData().get("fuelLevel"));
+                                                    double fuelLevel = Double.parseDouble((String)document.getData().get("fuelLevel"));
                                                     vehicleNames[i].setText(name);
                                                     LocalStorage.UIDs[i] = document.getId();
 

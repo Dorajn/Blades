@@ -43,6 +43,7 @@
             android:background="@drawable/custom_input"
             android:paddingEnd="12dp"
             android:paddingStart="12dp"
+            android:imeOptions="actionDone"
             style="@style/EDIT_TEXT"/>
 
         <EditText
@@ -58,6 +59,7 @@
             android:background="@drawable/custom_input"
             android:paddingEnd="12dp"
             android:paddingStart="12dp"
+            android:imeOptions="actionDone"
             style="@style/EDIT_TEXT"/>
 
         <EditText
@@ -73,6 +75,7 @@
             android:background="@drawable/custom_input"
             android:paddingEnd="12dp"
             android:paddingStart="12dp"
+            android:imeOptions="actionDone"
             style="@style/EDIT_TEXT"/>
 
         <androidx.appcompat.widget.AppCompatButton

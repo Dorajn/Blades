@@ -45,6 +45,7 @@
                 android:drawableStart="@drawable/baseline_speed_24"
                 android:drawablePadding="10dp"
                 android:hint="mileage"
+                android:imeOptions="actionDone"
                 android:inputType="text"
                 android:paddingStart="12dp"
                 android:paddingEnd="12dp" />

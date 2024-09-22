@@ -39,6 +39,20 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:text="Time: infinity"
+                android:drawableStart="@drawable/baseline_access_time_24"
+                android:drawablePadding="10dp"
+                style="@style/TEXT_STAT"
+                android:textSize="20dp" />
+
+            <TextView
+                android:id="@+id/cost"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:text="Cost: infinity"
+                android:drawableStart="@drawable/baseline_attach_money_24"
+                android:drawablePadding="10dp"
+                android:layout_below="@id/time"
                 style="@style/TEXT_STAT"
                 android:textSize="20dp" />
 
@@ -48,11 +62,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="40dp"
+                android:layout_marginTop="20dp"
                 android:text="Enter current mileage and average fuel consumption in order to process the petrol left in tank."
                 style="@style/TEXT_STAT"
                 android:textSize="16dp"
-                android:layout_below="@id/time"/>
+                android:layout_below="@id/cost"/>
 
 
             <EditText
@@ -68,6 +82,7 @@
                 android:paddingStart="12dp"
                 android:paddingEnd="12dp"
                 android:layout_marginTop="20dp"
+                android:imeOptions="actionDone"
                 android:layout_below="@id/announcement"
                 />
 
@@ -84,6 +99,7 @@
                 android:paddingStart="12dp"
                 android:paddingEnd="12dp"
                 android:layout_marginTop="10dp"
+                android:imeOptions="actionDone"
                 android:layout_below="@id/mileageOnFinishEditTextDialog"
                 />
 
@@ -95,6 +111,18 @@
                 android:text="ACCEPT"
                 android:background="@drawable/rounded_button"
                 android:id="@+id/trackAcceptButton"
+                android:visibility="visible"
+                style="@style/BUTTON"/>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/avgConsumptionEditTextDialog"
+                android:layout_marginTop="40dp"
+                android:text="GO BACK"
+                android:background="@drawable/go_back_button"
+                android:id="@+id/trackGoBackButton"
+                android:visibility="invisible"
                 style="@style/BUTTON"/>
 
             <androidx.appcompat.widget.AppCompatButton
@@ -105,7 +133,22 @@
                 android:text="DISMISS"
                 android:background="@drawable/dismiss_button"
                 android:id="@+id/dismiss"
+                android:visibility="visible"
                 style="@style/BUTTON"/>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/trackAcceptButton"
+                android:layout_marginTop="15dp"
+                android:text="DISMISS"
+                android:background="@drawable/inactive_button"
+                android:id="@+id/inactiveButton"
+                android:textColor="#878786"
+                android:textStyle="bold"
+                android:textSize="16dp"
+                android:visibility="invisible"
+                />
 
         </RelativeLayout>
 
