@@ -557,8 +557,10 @@ public class Car extends AppCompatActivity {
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 DocumentSnapshot document = task.getResult();
 
+                double temp = Double.parseDouble(newFuelLevel);
+
                 Toast.makeText(view.getContext(), "Fuel level changed", Toast.LENGTH_SHORT).show();
-                vehicleFuelLevel.setText(newFuelLevel);
+                vehicleFuelLevel.setText(String.format("%.2f", temp));
 
                 if(Double.parseDouble(newFuelLevel) <= LocalStorage.lowFuelWarning){
                     fuelChange.setImageResource(R.drawable.baseline_local_gas_station_24_red);

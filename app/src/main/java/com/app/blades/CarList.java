@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -105,9 +106,15 @@ public class CarList extends AppCompatActivity {
         addCarButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), CarAdder.class);
-                startActivity(intent);
-                finish();
+
+                if(LocalStorage.vehicleCount == 5){
+                    Toast.makeText(view.getContext(), "You've reached maximum vehicles number", Toast.LENGTH_LONG).show();
+                }
+                else{
+                    Intent intent = new Intent(getApplicationContext(), CarAdder.class);
+                    startActivity(intent);
+                    finish();
+                }
             }
         });
 

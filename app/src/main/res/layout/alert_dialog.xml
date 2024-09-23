@@ -44,7 +44,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/askingText1"
-            android:text="You will lost all informations about this drive."
+            android:text="You will lost all information about this drive."
             android:layout_centerHorizontal="true"
             android:layout_marginTop="0dp"
             style="@style/TEXT"
