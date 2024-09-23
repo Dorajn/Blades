@@ -38,7 +38,7 @@ import java.util.TimerTask;
 
 public class Car extends AppCompatActivity {
 
-    TextView vehicleName, vehicleMileage, vehicleFuelLevel, cost, timeValue;
+    TextView vehicleName, vehicleMileage, vehicleFuelLevel, cost, timeValue, avgSpeed;
     FirebaseFirestore db;
     FirebaseAuth auth;
     String userID;
@@ -63,6 +63,7 @@ public class Car extends AppCompatActivity {
     Timer timer;
     TimerTask timerTask;
     double time = 0;
+    double timeSaved = 0;
 
 
     @Override
@@ -154,6 +155,7 @@ public class Car extends AppCompatActivity {
         goBack = dialogTrack.findViewById(R.id.trackGoBackButton);
         inactiveButton = dialogTrack.findViewById(R.id.inactiveButton);
         timeValue = dialogTrack.findViewById(R.id.time);
+        avgSpeed = dialogTrack.findViewById(R.id.avgSpeed);
 
         yes = alertYesNo.findViewById(R.id.yes);
         no = alertYesNo.findViewById(R.id.no);
@@ -226,6 +228,9 @@ public class Car extends AppCompatActivity {
 
                 cost.setText("Cost: " + String.format("%.2f", fuelUsed * LocalStorage.fuelPrice));
                 cost.setTextColor(Color.parseColor("#2DBC95"));
+
+                double averageSpeed = (double)kmDriven / (timeSaved / 3600);
+                avgSpeed.setText("Average speed: " + String.format("%.2f", averageSpeed) + " km/h");;
 
                 userID = auth.getCurrentUser().getUid();
                 DocumentReference userData = db.collection("vehicles")
@@ -483,6 +488,7 @@ public class Car extends AppCompatActivity {
     public void resetTrackDialog(){
         cost.setText("Cost: unknown, enter data");
         cost.setTextColor(Color.parseColor("#BBBBBB"));
+        avgSpeed.setText("Average speed: unknown");
         avgConsumptionEditText.setText("");
         mileageTrackEditText.setText("");
     }
@@ -534,6 +540,7 @@ public class Car extends AppCompatActivity {
         timerView.setTextColor(Color.parseColor("#bbbbbb"));
         timerTask.cancel();
         timerView.setText("  00:00:00");
+        timeSaved = time;
         time = 0;
     }
 
