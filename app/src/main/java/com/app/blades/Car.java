@@ -44,10 +44,10 @@ public class Car extends AppCompatActivity {
     String userID;
     Button changeCar, trackRide, endTracking, inactiveButton;
     ImageView fuelChange, mileage;
-    EditText fuelLevelEditTextDialog, mileageEditTextDialog, mileageTrackEditText, avgConsumptionEditText;
+    EditText fuelLevelEditTextDialog, mileageEditTextDialog, mileageTrackEditText, avgConsumptionEditText, RefuelLevelEditTextDialog;
 
-    Dialog dialogFuel, dialogMileage, dialogMore, dialogTrack;
-    Button acceptFuelChange, acceptMileageChange, acceptTrack, dismiss, goBack;
+    Dialog dialogFuel, dialogMileage, dialogMore, dialogTrack, dialogRefuelOption, dialogRefuel;
+    Button acceptFuelChange, acceptMileageChange, acceptTrack, dismiss, goBack, optionRefuel, optionEnterFuel, acceptFuelChangeRefuel;
     String vehicleUID;
 
     //vehicle stored values
@@ -88,6 +88,7 @@ public class Car extends AppCompatActivity {
         changeCar = findViewById(R.id.changeCarButton);
         timerView = findViewById(R.id.timer);
 
+
         timer = new Timer();
 
         //dialogs
@@ -95,6 +96,16 @@ public class Car extends AppCompatActivity {
         dialogMileage.setContentView(R.layout.mileage_change_dialog);
         dialogMileage.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         dialogMileage.getWindow().setBackgroundDrawable(getDrawable(R.drawable.dialogs_backgroud));
+
+        dialogRefuelOption = new Dialog(Car.this);
+        dialogRefuelOption.setContentView(R.layout.fuel_refil_options_dialog);
+        dialogRefuelOption.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialogRefuelOption.getWindow().setBackgroundDrawable(getDrawable(R.drawable.dialogs_backgroud));
+
+        dialogRefuel = new Dialog(Car.this);
+        dialogRefuel.setContentView(R.layout.fuel_refill_add_dialog);
+        dialogRefuel.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialogRefuel.getWindow().setBackgroundDrawable(getDrawable(R.drawable.dialogs_backgroud));
 
         dialogFuel = new Dialog(Car.this);
         dialogFuel.setContentView(R.layout.fuel_refill_dialog);
@@ -124,6 +135,13 @@ public class Car extends AppCompatActivity {
 
         fuelLevelEditTextDialog = dialogFuel.findViewById(R.id.fuelLevelEditTextDialog);
         acceptFuelChange = dialogFuel.findViewById(R.id.fuelAcceptButton);
+
+        RefuelLevelEditTextDialog = dialogRefuel.findViewById(R.id.fuelLevelEditTextDialogRefuel);
+        acceptFuelChangeRefuel = dialogRefuel.findViewById(R.id.fuelAcceptButtonRefuel);
+
+        optionEnterFuel = dialogRefuelOption.findViewById(R.id.changeValueFuelButton);
+        optionRefuel = dialogRefuelOption.findViewById(R.id.addFuelButton);
+
 
         mileageEditTextDialog = dialogMileage.findViewById(R.id.mileageEditTextDialog);
         acceptMileageChange = dialogMileage.findViewById(R.id.mileageChangeButtonDialog);
@@ -158,6 +176,7 @@ public class Car extends AppCompatActivity {
             public void onClick(View view) {
                 alertYesNo.dismiss();
                 dialogTrack.dismiss();
+                endTimer();
             }
         });
 
@@ -206,6 +225,7 @@ public class Car extends AppCompatActivity {
                 double fuelLeft = Double.parseDouble(fuelLevelStored) - fuelUsed;
 
                 cost.setText("Cost: " + String.format("%.2f", fuelUsed * LocalStorage.fuelPrice));
+                cost.setTextColor(Color.parseColor("#2DBC95"));
 
                 userID = auth.getCurrentUser().getUid();
                 DocumentReference userData = db.collection("vehicles")
@@ -232,6 +252,8 @@ public class Car extends AppCompatActivity {
                         Toast.makeText(Car.this, "Track saved!", Toast.LENGTH_SHORT).show();
 
                         vehicleMileage.setText(currentMileageAfter);
+                        mileageStored = currentMileageAfter;
+                        fuelLevelStored = String.valueOf(fuelLeft);
                         String fLevel2digits = String.format("%.2f", fuelLeft);
                         vehicleFuelLevel.setText(String.valueOf(fLevel2digits));
                         acceptTrack.setVisibility(View.INVISIBLE);
@@ -306,46 +328,32 @@ public class Car extends AppCompatActivity {
                 String newFuelLevel = fuelLevelEditTextDialog.getText().toString();
                 resetFuelRefillDialog();
 
-                if(Long.parseLong(newFuelLevel) < 0){
+                if(Double.parseDouble(newFuelLevel) < 0){
                     Toast.makeText(Car.this, "Fuel level can not be negative value!", Toast.LENGTH_LONG).show();
                     return;
                 }
 
-                userID = auth.getCurrentUser().getUid();
-                DocumentReference userData = db.collection("vehicles")
-                        .document(userID)
-                        .collection("vehicles")
-                        .document(vehicleUID);
+                changeFuelLevelInDataBase(newFuelLevel, view);
 
-                userData.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        DocumentSnapshot document = task.getResult();
+            }
+        });
 
-                        Toast.makeText(view.getContext(), "Fuel level changed", Toast.LENGTH_SHORT).show();
-                        vehicleFuelLevel.setText(newFuelLevel);
+        acceptFuelChangeRefuel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String refilledFuel = RefuelLevelEditTextDialog.getText().toString();
+                resetRefuelRefillDialog();
 
-                        if(Double.parseDouble(newFuelLevel) <= LocalStorage.lowFuelWarning){
-                            fuelChange.setImageResource(R.drawable.baseline_local_gas_station_24_red);
-                        }
-                        else{
-                            fuelChange.setImageResource(R.drawable.baseline_local_gas_station_24_white);
-                        }
-                        if(document.exists()){
-                            userData.update("fuelLevel", newFuelLevel);
-                        }
+                if(Double.parseDouble(refilledFuel) <= 0){
+                    Toast.makeText(Car.this, "Refilled amount must be greater than 0", Toast.LENGTH_LONG).show();
+                    return;
+                }
 
-                        fuelLevelStored = newFuelLevel;
-                        dialogFuel.dismiss();
+                double acctualFuelLevel = Double.parseDouble(fuelLevelStored);
+                double refilledNumber = Double.parseDouble(refilledFuel);
+                String newLevel = String.valueOf(acctualFuelLevel + refilledNumber);
 
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(view.getContext(), "Error occured", Toast.LENGTH_SHORT).show();
-                        dialogFuel.dismiss();
-                    }
-                });
+                changeFuelLevelInDataBase(newLevel, view);
 
             }
         });
@@ -353,9 +361,26 @@ public class Car extends AppCompatActivity {
         fuelChange.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                dialogRefuelOption.show();
+            }
+        });
+
+        optionRefuel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialogRefuelOption.dismiss();
                 dialogFuel.show();
             }
         });
+
+        optionEnterFuel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialogRefuelOption.dismiss();
+                dialogRefuel.show();
+            }
+        });
+
 
         mileage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -403,6 +428,7 @@ public class Car extends AppCompatActivity {
         resetButtons();
         resetTrackDialog();
         resetFuelRefillDialog();
+        resetRefuelRefillDialog();
         resetMileageChangeDialog();
 
         if(LocalStorage.newAddedCar){
@@ -456,12 +482,17 @@ public class Car extends AppCompatActivity {
 
     public void resetTrackDialog(){
         cost.setText("Cost: unknown, enter data");
+        cost.setTextColor(Color.parseColor("#BBBBBB"));
         avgConsumptionEditText.setText("");
         mileageTrackEditText.setText("");
     }
 
     public void resetFuelRefillDialog(){
         fuelLevelEditTextDialog.setText("");
+    }
+
+    public void resetRefuelRefillDialog(){
+        RefuelLevelEditTextDialog.setText("");
     }
 
     public void resetMileageChangeDialog(){
@@ -504,6 +535,48 @@ public class Car extends AppCompatActivity {
         timerTask.cancel();
         timerView.setText("  00:00:00");
         time = 0;
+    }
+
+    private void changeFuelLevelInDataBase(String newFuelLevel, View view){
+
+        userID = auth.getCurrentUser().getUid();
+        DocumentReference userData = db.collection("vehicles")
+                .document(userID)
+                .collection("vehicles")
+                .document(vehicleUID);
+
+        userData.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                DocumentSnapshot document = task.getResult();
+
+                Toast.makeText(view.getContext(), "Fuel level changed", Toast.LENGTH_SHORT).show();
+                vehicleFuelLevel.setText(newFuelLevel);
+
+                if(Double.parseDouble(newFuelLevel) <= LocalStorage.lowFuelWarning){
+                    fuelChange.setImageResource(R.drawable.baseline_local_gas_station_24_red);
+                }
+                else{
+                    fuelChange.setImageResource(R.drawable.baseline_local_gas_station_24_white);
+                }
+                if(document.exists()){
+                    userData.update("fuelLevel", newFuelLevel);
+                }
+
+                fuelLevelStored = newFuelLevel;
+                dialogFuel.dismiss();
+                dialogRefuel.dismiss();
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(view.getContext(), "Error occured", Toast.LENGTH_SHORT).show();
+                dialogFuel.dismiss();
+            }
+        });
+
+
     }
 
 }
