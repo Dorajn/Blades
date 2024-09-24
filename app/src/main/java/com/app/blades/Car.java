@@ -42,7 +42,7 @@ public class Car extends AppCompatActivity {
     FirebaseFirestore db;
     FirebaseAuth auth;
     String userID;
-    Button changeCar, trackRide, endTracking, inactiveButton;
+    Button changeCar, changeCarInactive, trackRide, endTracking, inactiveButton;
     ImageView fuelChange, mileage;
     EditText fuelLevelEditTextDialog, mileageEditTextDialog, mileageTrackEditText, avgConsumptionEditText, RefuelLevelEditTextDialog;
 
@@ -88,6 +88,7 @@ public class Car extends AppCompatActivity {
         mileage = findViewById(R.id.mileageChangeButton);
         changeCar = findViewById(R.id.changeCarButton);
         timerView = findViewById(R.id.timer);
+        changeCarInactive = findViewById(R.id.changeCarButtonInactive);
 
 
         timer = new Timer();
@@ -256,11 +257,11 @@ public class Car extends AppCompatActivity {
 
                         Toast.makeText(Car.this, "Track saved!", Toast.LENGTH_SHORT).show();
 
-                        vehicleMileage.setText(currentMileageAfter);
+                        vehicleMileage.setText("Mileage: " + currentMileageAfter);
                         mileageStored = currentMileageAfter;
                         fuelLevelStored = String.valueOf(fuelLeft);
                         String fLevel2digits = String.format("%.2f", fuelLeft);
-                        vehicleFuelLevel.setText(String.valueOf(fLevel2digits));
+                        vehicleFuelLevel.setText("Fuel: " + String.valueOf(fLevel2digits));
                         acceptTrack.setVisibility(View.INVISIBLE);
                         goBack.setVisibility(View.VISIBLE);
 
@@ -310,7 +311,7 @@ public class Car extends AppCompatActivity {
                             userData.update("mileage", newMileage);
                         }
 
-                        vehicleMileage.setText(newMileage);
+                        vehicleMileage.setText("Mileage: " + newMileage);
                         mileageStored = newMileage;
                         dialogMileage.dismiss();
 
@@ -408,6 +409,8 @@ public class Car extends AppCompatActivity {
             public void onClick(View view) {
                 trackRide.setVisibility(View.INVISIBLE);
                 endTracking.setVisibility(View.VISIBLE);
+                changeCar.setVisibility(View.INVISIBLE);
+                changeCarInactive.setVisibility(View.VISIBLE);
                 startTimer();
             }
         });
@@ -419,6 +422,10 @@ public class Car extends AppCompatActivity {
                 trackRide.setVisibility(View.VISIBLE);
                 timeValue.setText("Time: " + getTimerText());
                 dialogTrack.show();
+
+                changeCarInactive.setVisibility(View.INVISIBLE);
+                changeCar.setVisibility(View.VISIBLE);
+
                 endTimer();
             }
         });
@@ -465,11 +472,11 @@ public class Car extends AppCompatActivity {
                             }
 
                             vehicleName.setText(name);
-                            vehicleMileage.setText(mileageStored);
+                            vehicleMileage.setText("Mileage: " + mileageStored);
 
                             double fLevel = Double.parseDouble(fuelLevelStored);
                             String fLevel2digits = String.format("%.2f", fLevel);
-                            vehicleFuelLevel.setText(fLevel2digits);
+                            vehicleFuelLevel.setText("Fuel: " + fLevel2digits);
                         }
                         else{
                             Log.d("FireStore", "Vehicle not found.");
@@ -560,7 +567,7 @@ public class Car extends AppCompatActivity {
                 double temp = Double.parseDouble(newFuelLevel);
 
                 Toast.makeText(view.getContext(), "Fuel level changed", Toast.LENGTH_SHORT).show();
-                vehicleFuelLevel.setText(String.format("%.2f", temp));
+                vehicleFuelLevel.setText("Fuel: " + String.format("%.2f", temp));
 
                 if(Double.parseDouble(newFuelLevel) <= LocalStorage.lowFuelWarning){
                     fuelChange.setImageResource(R.drawable.baseline_local_gas_station_24_red);

@@ -149,6 +149,20 @@
         android:text="change car"
         android:background="@drawable/rounded_button"
         android:id="@+id/changeCarButton"
+        android:visibility="visible"
         style="@style/BUTTON"/>
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="20dp"
+        android:text="change car"
+        android:background="@drawable/inactive_change_car_button"
+        android:id="@+id/changeCarButtonInactive"
+        android:visibility="invisible"
+        style="@style/BUTTON"/>
+
 
 </RelativeLayout>

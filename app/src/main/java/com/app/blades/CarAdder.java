@@ -89,6 +89,22 @@ public class CarAdder extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+
+        if(LocalStorage.vehicleCount > 0){
+            Intent intent = new Intent(getApplicationContext(), CarList.class);
+            startActivity(intent);
+            finish();
+        }
+        else{
+            Intent intent = new Intent(getApplicationContext(), noCarsPage.class);
+            startActivity(intent);
+            finish();
+        }
+    }
+
     public void addDataToDataBase(String vehicleName, String vehicleMileage, String vehicleFuelLevel){
 
         Map<String, Object> vehicle = new HashMap<>();

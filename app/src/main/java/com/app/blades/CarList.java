@@ -194,9 +194,7 @@ public class CarList extends AppCompatActivity {
                                             }
                                         }
                                     });
-
                 }
-
             }
         });
 

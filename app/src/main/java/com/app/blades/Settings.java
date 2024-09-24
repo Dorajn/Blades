@@ -70,7 +70,7 @@ public class Settings extends AppCompatActivity {
             public void onClick(View view) {
                 double newPrice = Double.parseDouble(fuelPriceEditText.getText().toString());
 
-                if(newPrice > 0){
+                if (newPrice > 0) {
 
                     userID = auth.getCurrentUser().getUid();
                     DocumentReference userData = db.collection("users").document(userID);
@@ -79,7 +79,7 @@ public class Settings extends AppCompatActivity {
                         public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                             DocumentSnapshot document = task.getResult();
 
-                            if(document.exists()){
+                            if (document.exists()) {
                                 Toast.makeText(view.getContext(), "Fuel price changed", Toast.LENGTH_SHORT).show();
                                 infoCurrentFuelPrice.setText("Fuel price: " + String.valueOf(newPrice));
                                 userData.update("fuelPrice", newPrice);
@@ -110,11 +110,20 @@ public class Settings extends AppCompatActivity {
                     @Override
                     public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
 
-                        double fPrice = (double)value.getDouble("fuelPrice");
+                        double fPrice = (double) value.getDouble("fuelPrice");
                         Log.d("witj", String.valueOf(fPrice));
                         LocalStorage.fuelPrice = fPrice;
                         infoCurrentFuelPrice.setText("Fuel price: " + String.valueOf(fPrice));
                     }
                 });
     }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent intent = new Intent(this, CarList.class);
+        startActivity(intent);
+        finish();
+    }
+
 }
