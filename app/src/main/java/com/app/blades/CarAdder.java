@@ -22,6 +22,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -107,22 +108,27 @@ public class CarAdder extends AppCompatActivity {
 
     public void addDataToDataBase(String vehicleName, String vehicleMileage, String vehicleFuelLevel){
 
+        userID = mAuth.getCurrentUser().getUid();
+
         Map<String, Object> vehicle = new HashMap<>();
         vehicle.put("vehicleName", vehicleName);
         vehicle.put("mileage", vehicleMileage);
         vehicle.put("fuelLevel", vehicleFuelLevel);
+        //vehicle.put("users", Arrays.asList(userID));
 
 
-        userID = mAuth.getCurrentUser().getUid();
-        db.collection("vehicles")
-                .document(userID).collection("vehicles")
-                .add(vehicle)
+        db.collection("vehicles").add(vehicle)
                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                     @Override
                     public void onSuccess(DocumentReference documentReference) {
                         Toast.makeText(CarAdder.this, "Vehicle created.", Toast.LENGTH_SHORT).show();
                         LocalStorage.currentNewVehicleUID = documentReference.getId();
 
+                        Map<String, Object> userVehicle = new HashMap<>();
+                        userVehicle.put("userID", userID);
+                        userVehicle.put("vehicleID", documentReference.getId());
+                        userVehicle.put("relationType", "owner");
+                        db.collection("userVehicles").add(userVehicle);
 
                         DocumentReference userData = db.collection("users").document(userID);
                         userData.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -152,7 +158,6 @@ public class CarAdder extends AppCompatActivity {
                         Intent intent = new Intent(getApplicationContext(), Car.class);
                         startActivity(intent);
                         finish();
-
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -161,9 +166,6 @@ public class CarAdder extends AppCompatActivity {
                         Toast.makeText(CarAdder.this, "Oops, something went wrong.", Toast.LENGTH_SHORT).show();
                     }
                 });
-
-
-
     }
 
 }

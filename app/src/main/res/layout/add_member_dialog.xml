@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:cardElevation="10dp"
+    app:cardCornerRadius="16dp">
+
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#474747"
+        android:paddingBottom="35dp"
+        >
+
+
+
+        <TextView
+            android:id="@+id/addVehicleMamberText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
+            android:text="Add vehicle member"
+            style="@style/TEXT"
+            android:textStyle="bold"
+            android:textSize="25dp" />
+
+        <TextView
+            android:id="@+id/textMember"
+            android:layout_width="wrap_content"
+            android:layout_marginHorizontal="50dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/addVehicleMamberText"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp"
+            android:text="Added member can drive, refuel and change mileage of the car. Ensure that you are adding correct nick!"
+            style="@style/TEXT"
+            android:textSize="13dp"
+
+            />
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/textMember"
+            android:layout_marginHorizontal="45dp"
+            android:layout_marginTop="20dp">
+
+            <EditText
+                android:id="@+id/addMemberEditTextDialog"
+                style="@style/EDIT_TEXT"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/custom_input"
+                android:drawableStart="@drawable/img_person"
+                android:drawablePadding="10dp"
+                android:hint="Nickname"
+                android:inputType="text"
+                android:paddingStart="12dp"
+                android:imeOptions="actionDone"
+                android:paddingEnd="12dp" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/addMemberEditTextDialog"
+                android:layout_marginTop="15dp"
+                android:text="Add member"
+                android:background="@drawable/rounded_button"
+                android:id="@+id/addMemberAcceptButton"
+                style="@style/BUTTON"/>
+
+        </RelativeLayout>
+
+
+    </RelativeLayout>
+
+</androidx.cardview.widget.CardView>

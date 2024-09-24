@@ -23,6 +23,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.Source;
 
 public class CarList extends AppCompatActivity {
 
@@ -161,37 +162,49 @@ public class CarList extends AppCompatActivity {
                                 tiles[i].setVisibility(View.VISIBLE);
                             }
 
-                            //changing vehicle names in tiles
-                            db.collection("vehicles")
-                                    .document(userID)
-                                    .collection("vehicles")
-                                    .get()
+                            db.collection("userVehicles")
+                                    .whereEqualTo("userID", userID)
+                                    .get(Source.SERVER)
                                     .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                         @Override
                                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
 
                                             if(task.isSuccessful()){
                                                 int i = 0;
-                                                for (QueryDocumentSnapshot document : task.getResult()) {
-                                                    String name = (String)document.getData().get("vehicleName");
-                                                    double fuelLevel = Double.parseDouble((String)document.getData().get("fuelLevel"));
-                                                    vehicleNames[i].setText(name);
-                                                    LocalStorage.UIDs[i] = document.getId();
+                                                for(QueryDocumentSnapshot document : task.getResult()){
+                                                    String vehicleID = (String)document.getData().get("vehicleID");
+                                                    int finalI = i;
+                                                    db.collection("vehicles")
+                                                            .document(vehicleID)
+                                                            .get(Source.SERVER)
+                                                            .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                                                @Override
+                                                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                                                    DocumentSnapshot documentV = task.getResult();
+                                                                    if(documentV.exists()){
+                                                                        String name = (String)documentV.getData().get("vehicleName");
+                                                                        vehicleNames[finalI].setText(name);
+                                                                        LocalStorage.UIDs[finalI] = documentV.getId();
+                                                                        double fuelLevel = Double.parseDouble((String)documentV.getData().get("fuelLevel"));
 
-                                                    if(fuelLevel <= LocalStorage.lowFuelWarning){
-                                                        warnings[i].setVisibility(View.VISIBLE);
-                                                    }
-                                                    else{
-                                                        warnings[i].setVisibility(View.INVISIBLE);
-                                                    }
+
+                                                                        if(fuelLevel <= LocalStorage.lowFuelWarning){
+                                                                            warnings[finalI].setVisibility(View.VISIBLE);
+                                                                        }
+                                                                        else{
+                                                                            warnings[finalI].setVisibility(View.INVISIBLE);
+                                                                        }
+                                                                    }
+                                                                }
+                                                            });
 
                                                     i++;
-
                                                 }
                                             }
                                             else{
-                                                Log.e("nie", "Error getting documents: ", task.getException());
+                                                Log.d("Firestore", "error getting data from userVehicle");
                                             }
+
                                         }
                                     });
                 }

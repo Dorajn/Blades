@@ -18,10 +18,10 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -142,10 +142,10 @@ public class Register extends AppCompatActivity {
                                     user.put("email", email);
                                     user.put("vehicleCount", 0);
                                     user.put("fuelPrice", 6);
+                                    //user.put("vehicles", new ArrayList<>());
 
                                     userID = mAuth.getCurrentUser().getUid();
                                     db.collection("users").document(userID).set(user);
-
 
                                     Intent intent = new Intent(getApplicationContext(), noCarsPage.class);
                                     startActivity(intent);
