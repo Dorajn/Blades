@@ -61,7 +61,21 @@
             android:textStyle="bold"
             />
 
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/vehicleOptions"
+            android:layout_centerHorizontal="true"
+            android:text="Statistics"
+            android:textSize="20dp"
+            android:id="@+id/statistics"
+            android:layout_margin="20dp"
+            android:textColor="@color/cyan"
+            android:textStyle="bold"/>
+
         <LinearLayout
+            android:id="@+id/vehicleOptions"
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:orientation="horizontal"
@@ -111,6 +125,8 @@
 
 
         </LinearLayout>
+
+
 
         <androidx.appcompat.widget.AppCompatButton
             android:layout_width="match_parent"

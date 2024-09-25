@@ -33,6 +33,7 @@ public class CarAdder extends AppCompatActivity {
     EditText inputVehicleCurrFuelLevel;
     Button createVehicle, goBack;
     String userID;
+    String nickname;
 
     FirebaseAuth mAuth;
     FirebaseFirestore db;
@@ -60,6 +61,9 @@ public class CarAdder extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_car_adder);
+
+        Intent intent = getIntent();
+        nickname = intent.getStringExtra("nickname");
 
         inputVehicleName = findViewById(R.id.editTextVehicleName);
         inputVehicleMileage = findViewById(R.id.editTextVehicleMileage);
@@ -114,7 +118,7 @@ public class CarAdder extends AppCompatActivity {
         vehicle.put("vehicleName", vehicleName);
         vehicle.put("mileage", vehicleMileage);
         vehicle.put("fuelLevel", vehicleFuelLevel);
-        //vehicle.put("users", Arrays.asList(userID));
+        vehicle.put("memberCount", 1);
 
 
         db.collection("vehicles").add(vehicle)
@@ -128,6 +132,9 @@ public class CarAdder extends AppCompatActivity {
                         userVehicle.put("userID", userID);
                         userVehicle.put("vehicleID", documentReference.getId());
                         userVehicle.put("relationType", "owner");
+                        userVehicle.put("nickname", nickname);
+                        userVehicle.put("usedFuel", 0);
+                        userVehicle.put("deliveredFuel", 0);
                         db.collection("userVehicles").add(userVehicle);
 
                         DocumentReference userData = db.collection("users").document(userID);
@@ -151,6 +158,7 @@ public class CarAdder extends AppCompatActivity {
 
                             }
                         });
+
 
                         LocalStorage.vehicleCount += 1;
                         LocalStorage.newAddedCar = true;

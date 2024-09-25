@@ -42,6 +42,7 @@ public class CarList extends AppCompatActivity {
     String userID;
     long vehiclesCount;
     TextView nick;
+    String nickname;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,6 +114,7 @@ public class CarList extends AppCompatActivity {
                 }
                 else{
                     Intent intent = new Intent(getApplicationContext(), CarAdder.class);
+                    intent.putExtra("nickname", nickname);
                     startActivity(intent);
                     finish();
                 }
@@ -136,6 +138,7 @@ public class CarList extends AppCompatActivity {
                     @Override
                     public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
                         nick.setText("Hi, " + value.getString("nick"));
+                        nickname = value.getString("nick");
                     }
                 });
 
