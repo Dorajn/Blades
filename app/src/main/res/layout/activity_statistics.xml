@@ -36,6 +36,7 @@
         android:layout_below="@id/statText"/>
 
     <LinearLayout
+        android:id="@+id/tiles"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/statInfo"
@@ -301,6 +302,19 @@
     </LinearLayout>
 
 
+    <TextView
+        android:id="@+id/suggestion"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginHorizontal="40dp"
+        android:layout_marginTop="20dp"
+        android:textAlignment="center"
+        android:text="Name should now fill up the tank. Used 5 liters of someone else's fuel."
+        style="@style/TEXT_STAT"
+        android:textSize="16dp"
+        android:visibility="invisible"
+        android:layout_below="@id/tiles"/>
 
 
     <androidx.appcompat.widget.AppCompatButton

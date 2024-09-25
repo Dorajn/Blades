@@ -51,6 +51,8 @@ public class Statistics extends AppCompatActivity {
     TextView member4, used4, refueled4;
     TextView member5, used5, refueled5;
 
+    TextView suggestion;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +65,7 @@ public class Statistics extends AppCompatActivity {
 
         Intent intent = getIntent();
         vehicleID = intent.getStringExtra("vehicleID");
+        suggestion = findViewById(R.id.suggestion);
 
         goBack = findViewById(R.id.goBackStat);
 
@@ -137,6 +140,12 @@ public class Statistics extends AppCompatActivity {
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
 
+                            double maxDebtInFuel = -1;
+                            boolean textMessage = false;
+                            String whoIsInDebtTheMost = "error";
+                            double vol = -80;
+                            double volTemp;
+
                             int i = 0;
                             for (QueryDocumentSnapshot document : task.getResult()) {
 
@@ -144,10 +153,20 @@ public class Statistics extends AppCompatActivity {
                                 double dFuel = document.getDouble("deliveredFuel");
                                 String userNick = document.getString("nickname");
 
+                                //max debt section
+                                if(uFuel > dFuel && memberCount > 1){
+                                    textMessage = true;
+
+                                    if(Math.abs(uFuel - dFuel) > maxDebtInFuel){
+                                        maxDebtInFuel = Math.abs(uFuel - dFuel);
+                                        whoIsInDebtTheMost = userNick;
+                                    }
+
+                                }
+
+                                //drawable change
                                 Drawable not_debt = getDrawable(R.drawable.not_in_debt);
                                 Drawable debt = getDrawable(R.drawable.in_debt);
-
-
                                 if(dFuel >= uFuel){
                                     statTiles[i].tile.setBackground(not_debt);
                                 }
@@ -160,6 +179,15 @@ public class Statistics extends AppCompatActivity {
                                 statTiles[i].refueled.setText("Refueled: " + String.format("%.2f", dFuel));
                                 i++;
                             }
+
+                            if(textMessage && memberCount > 1){
+                                suggestion.setVisibility(View.VISIBLE);
+                                suggestion.setText(whoIsInDebtTheMost + " should now fill up the tank. Used "  + String.format("%.2f", maxDebtInFuel) + " liters of someone else's fuel.");
+                            }
+                            else{
+                                suggestion.setVisibility(View.INVISIBLE);
+                            }
+
                         } else {
                             Log.w("Firestore", "Error getting documents.", task.getException());
                         }
