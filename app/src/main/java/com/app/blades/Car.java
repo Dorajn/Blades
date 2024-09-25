@@ -31,6 +31,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.Source;
 
@@ -382,6 +383,8 @@ public class Car extends AppCompatActivity {
                 double fuelUsed = (averageFuelCon * (double)kmDriven) / 100;
                 double fuelLeft = Double.parseDouble(fuelLevelStored) - fuelUsed;
 
+                addFuelUsageRecordToDataBase(String.valueOf(fuelLeft));
+
                 cost.setText("Cost: " + String.format("%.2f", fuelUsed * LocalStorage.fuelPrice));
                 cost.setTextColor(Color.parseColor("#2DBC95"));
 
@@ -490,6 +493,7 @@ public class Car extends AppCompatActivity {
                     return;
                 }
 
+                addFuelUsageRecordToDataBase(newFuelLevel);
                 changeFuelLevelInDataBase(newFuelLevel, view);
 
             }
@@ -510,6 +514,7 @@ public class Car extends AppCompatActivity {
                 double refilledNumber = Double.parseDouble(refilledFuel);
                 String newLevel = String.valueOf(acctualFuelLevel + refilledNumber);
 
+                addFuelUsageRecordToDataBase(newLevel);
                 changeFuelLevelInDataBase(newLevel, view);
 
             }
@@ -739,6 +744,52 @@ public class Car extends AppCompatActivity {
             }
         });
 
+
+    }
+
+    private void addFuelUsageRecordToDataBase(String newFuelLevel){
+
+        double newFL = Double.parseDouble(newFuelLevel);
+        double fuelS = Double.parseDouble(fuelLevelStored);
+        double volumen = Math.abs(newFL - fuelS);
+
+        boolean delivered;
+        if(newFL > fuelS){
+            delivered = true;
+        }
+        else if(newFL < fuelS){
+            delivered = false;
+        }
+        else {
+            return;
+        }
+
+
+        db.collection("userVehicles")
+                .whereEqualTo("userID", userID)
+                .whereEqualTo("vehicleID", vehicleUID)
+                .get(Source.SERVER)
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful() && !task.getResult().isEmpty()) {
+                            QueryDocumentSnapshot document = (QueryDocumentSnapshot) task.getResult().getDocuments().get(0);
+                            String documentId = document.getId();
+
+                            double uFuel = document.getDouble("usedFuel");
+                            double dFuel = document.getDouble("deliveredFuel");
+
+                            if (delivered) {
+                                db.collection("userVehicles").document(documentId)
+                                        .update("deliveredFuel", dFuel + volumen);
+                            } else {
+                                db.collection("userVehicles").document(documentId)
+                                        .update("usedFuel", uFuel + volumen);
+                            }
+
+                        }
+                    }
+                });
 
     }
 

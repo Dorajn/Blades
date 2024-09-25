@@ -1,6 +1,8 @@
 package com.app.blades;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -130,16 +132,32 @@ public class Statistics extends AppCompatActivity {
                 .whereEqualTo("vehicleID", vehicleID)
                 .get(Source.SERVER)
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
 
                             int i = 0;
                             for (QueryDocumentSnapshot document : task.getResult()) {
-                                Map<String, Object> data = document.getData();
-                                statTiles[i].name.setText((String) data.get("nickname"));
-//                                statTiles[i].used.setText("Used: " + String.format("%.2f", (long)data.get("usedFuel")));
-//                                statTiles[i].refueled.setText("Refueled: " + String.format("%.2f", (long)data.get("deliveredFuel")));
+
+                                double uFuel = document.getDouble("usedFuel");
+                                double dFuel = document.getDouble("deliveredFuel");
+                                String userNick = document.getString("nickname");
+
+                                Drawable not_debt = getDrawable(R.drawable.not_in_debt);
+                                Drawable debt = getDrawable(R.drawable.in_debt);
+
+
+                                if(dFuel >= uFuel){
+                                    statTiles[i].tile.setBackground(not_debt);
+                                }
+                                else{
+                                    statTiles[i].tile.setBackground(debt);
+                                }
+
+                                statTiles[i].name.setText(userNick);
+                                statTiles[i].used.setText("Used: " + String.format("%.2f", uFuel));
+                                statTiles[i].refueled.setText("Refueled: " + String.format("%.2f", dFuel));
                                 i++;
                             }
                         } else {
