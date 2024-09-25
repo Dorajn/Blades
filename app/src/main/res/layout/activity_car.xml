@@ -61,7 +61,21 @@
             android:textStyle="bold"
             />
 
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/vehicleOptions"
+            android:layout_centerHorizontal="true"
+            android:text="Statistics"
+            android:textSize="20dp"
+            android:id="@+id/statistics"
+            android:layout_margin="20dp"
+            android:textColor="@color/cyan"
+            android:textStyle="bold"/>
+
         <LinearLayout
+            android:id="@+id/vehicleOptions"
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:orientation="horizontal"
@@ -91,7 +105,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="  00:00:00"
+                android:text="00:00:00"
                 android:textSize="22sp"
                 android:textColor="@color/ultra_light_gray"
                 android:textStyle="bold"
@@ -102,15 +116,17 @@
                 />
 
             <ImageView
-                android:id="@+id/moreOptions"
+                android:id="@+id/addMember"
                 android:layout_width="50dp"
                 android:layout_height="match_parent"
                 android:layout_marginRight="20dp"
-                android:src="@drawable/baseline_more_vert_24"
+                android:src="@drawable/baseline_person_add_alt_1_24"
                 android:visibility="visible" />
 
 
         </LinearLayout>
+
+
 
         <androidx.appcompat.widget.AppCompatButton
             android:layout_width="match_parent"

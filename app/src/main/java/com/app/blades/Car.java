@@ -31,23 +31,27 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.Source;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class Car extends AppCompatActivity {
 
-    TextView vehicleName, vehicleMileage, vehicleFuelLevel, cost, timeValue, avgSpeed;
+    TextView vehicleName, vehicleMileage, vehicleFuelLevel, cost, timeValue, avgSpeed, stat;
     FirebaseFirestore db;
     FirebaseAuth auth;
     String userID;
     Button changeCar, changeCarInactive, trackRide, endTracking, inactiveButton;
-    ImageView fuelChange, mileage;
-    EditText fuelLevelEditTextDialog, mileageEditTextDialog, mileageTrackEditText, avgConsumptionEditText, RefuelLevelEditTextDialog;
+    ImageView fuelChange, mileage, member;
+    EditText fuelLevelEditTextDialog, mileageEditTextDialog, mileageTrackEditText, avgConsumptionEditText, RefuelLevelEditTextDialog, addMemberEditText;
 
-    Dialog dialogFuel, dialogMileage, dialogMore, dialogTrack, dialogRefuelOption, dialogRefuel;
-    Button acceptFuelChange, acceptMileageChange, acceptTrack, dismiss, goBack, optionRefuel, optionEnterFuel, acceptFuelChangeRefuel;
+    Dialog dialogFuel, dialogMileage, dialogMore, dialogTrack, dialogRefuelOption, dialogRefuel, dialogAddMember;
+    Button acceptFuelChange, acceptMileageChange, acceptTrack, dismiss, goBack, optionRefuel, optionEnterFuel, acceptFuelChangeRefuel, addMemberButton;
     String vehicleUID;
 
     //vehicle stored values
@@ -89,6 +93,8 @@ public class Car extends AppCompatActivity {
         changeCar = findViewById(R.id.changeCarButton);
         timerView = findViewById(R.id.timer);
         changeCarInactive = findViewById(R.id.changeCarButtonInactive);
+        member = findViewById(R.id.addMember);
+        stat = findViewById(R.id.statistics);
 
 
         timer = new Timer();
@@ -125,6 +131,11 @@ public class Car extends AppCompatActivity {
         alertYesNo.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         alertYesNo.getWindow().setBackgroundDrawable(getDrawable(R.drawable.dialogs_backgroud));
 
+        dialogAddMember = new Dialog(Car.this);
+        dialogAddMember.setContentView(R.layout.add_member_dialog);
+        dialogAddMember.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialogAddMember.getWindow().setBackgroundDrawable(getDrawable(R.drawable.dialogs_backgroud));
+
         Window window = alertYesNo.getWindow();
         if (window != null) {
             window.setDimAmount(0.8f);
@@ -133,6 +144,11 @@ public class Car extends AppCompatActivity {
         Window window2 = dialogTrack.getWindow();
         if (window2 != null) {
             window2.setDimAmount(0.8f);
+        }
+
+        Window window3 = dialogAddMember.getWindow();
+        if (window3 != null) {
+            window3.setDimAmount(0.8f);
         }
 
         fuelLevelEditTextDialog = dialogFuel.findViewById(R.id.fuelLevelEditTextDialog);
@@ -158,6 +174,10 @@ public class Car extends AppCompatActivity {
         timeValue = dialogTrack.findViewById(R.id.time);
         avgSpeed = dialogTrack.findViewById(R.id.avgSpeed);
 
+        addMemberEditText = dialogAddMember.findViewById(R.id.addMemberEditTextDialog);
+        addMemberButton = dialogAddMember.findViewById(R.id.addMemberAcceptButton);
+
+
         yes = alertYesNo.findViewById(R.id.yes);
         no = alertYesNo.findViewById(R.id.no);
 
@@ -166,6 +186,142 @@ public class Car extends AppCompatActivity {
         auth = FirebaseAuth.getInstance();
 
         userID = auth.getCurrentUser().getUid();
+
+        stat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), Statistics.class);
+                intent.putExtra("vehicleID", vehicleUID);
+                startActivity(intent);
+                finish();
+            }
+        });
+
+        member.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                db.collection("userVehicles")
+                        .whereEqualTo("userID", userID)
+                        .whereEqualTo("vehicleID", vehicleUID)
+                        .get(Source.SERVER)
+                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                if(task.isSuccessful()){
+                                    QuerySnapshot querySnapshot = task.getResult();
+                                    if (querySnapshot != null && !querySnapshot.isEmpty()) {
+                                        DocumentSnapshot document = querySnapshot.getDocuments().get(0);
+                                        String type = document.getString("relationType");
+
+                                        if(type.equals("owner")){
+                                            dialogAddMember.show();
+                                        }
+                                        else{
+                                            Toast.makeText(Car.this, "You need to be vehicle owner to add members", Toast.LENGTH_LONG).show();
+                                        }
+
+                                    }
+
+                                }
+                            }
+                        });
+            }
+        });
+
+        addMemberButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String nickname = addMemberEditText.getText().toString();
+
+                db.collection("users")
+                        .whereEqualTo("nick", nickname)
+                        .get(Source.SERVER)
+                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    QuerySnapshot querySnapshot = task.getResult();
+                                    if (querySnapshot != null && !querySnapshot.isEmpty()) {
+                                        DocumentSnapshot document = querySnapshot.getDocuments().get(0);
+                                        String newMemberID = document.getId();
+
+                                        //changing vehicle count in member record
+                                        DocumentReference userData = db.collection("users").document(newMemberID);
+                                        userData.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                                DocumentSnapshot document = task.getResult();
+                                                if(document.exists()){
+
+                                                    Long vehicleCount = document.getLong("vehicleCount");
+
+                                                    if(vehicleCount == 5){
+                                                        Toast.makeText(Car.this, nickname + " has reached vehicle limit!", Toast.LENGTH_LONG).show();
+                                                    }
+                                                    else{
+                                                        //adding record to relation table
+                                                        Map<String, Object> userVehicle = new HashMap<>();
+                                                        userVehicle.put("userID", newMemberID);
+                                                        userVehicle.put("vehicleID", vehicleUID);
+                                                        userVehicle.put("relationType", "member");
+                                                        userVehicle.put("nickname", nickname);
+                                                        userVehicle.put("usedFuel", 0);
+                                                        userVehicle.put("deliveredFuel", 0);
+                                                        db.collection("userVehicles").add(userVehicle);
+
+                                                        //changing vehicle count
+                                                        userData.update("vehicleCount", (vehicleCount + 1))
+                                                                .addOnSuccessListener(aVoid -> {
+                                                                    Log.d(TAG, "Liczba pojazdów zaktualizowana pomyślnie.");
+                                                                })
+                                                                .addOnFailureListener(e -> {
+                                                                    Log.e(TAG, "Błąd przy aktualizacji liczby pojazdów: ", e);
+                                                                });
+
+
+                                                        DocumentReference vehicleData = db.collection("vehicles").document(vehicleUID);
+                                                        vehicleData.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                                            @Override
+                                                            public void onComplete(@NonNull Task<DocumentSnapshot> task2) {
+                                                                DocumentSnapshot document2 = task2.getResult();
+                                                                if(document2.exists()){
+
+                                                                    Long memberCount = document2.getLong("memberCount");
+                                                                    Log.d("Pizda", String.valueOf(memberCount));
+
+                                                                    vehicleData.update("memberCount", (memberCount + 1))
+                                                                            .addOnSuccessListener(aVoid -> {
+                                                                                Log.d(TAG, "Liczba pojazdów zaktualizowana pomyślnie.");
+                                                                            })
+                                                                            .addOnFailureListener(e -> {
+                                                                                Log.e(TAG, "Błąd przy aktualizacji liczby pojazdów: ", e);
+                                                                            });
+
+                                                                }
+
+                                                            }
+                                                        });
+
+
+                                                        Toast.makeText(Car.this, nickname + " added as member", Toast.LENGTH_SHORT).show();
+                                                        dialogAddMember.dismiss();
+                                                    }
+
+
+                                                }
+
+                                            }
+                                        });
+                                    } else {
+                                        Toast.makeText(Car.this, "No user foud with this nickname", Toast.LENGTH_SHORT).show();
+                                    }
+                                } else {
+                                    Toast.makeText(Car.this, "Oops, something went wrong...", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+            }
+        });
 
         dismiss.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -227,6 +383,8 @@ public class Car extends AppCompatActivity {
                 double fuelUsed = (averageFuelCon * (double)kmDriven) / 100;
                 double fuelLeft = Double.parseDouble(fuelLevelStored) - fuelUsed;
 
+                addFuelUsageRecordToDataBase(String.valueOf(fuelLeft));
+
                 cost.setText("Cost: " + String.format("%.2f", fuelUsed * LocalStorage.fuelPrice));
                 cost.setTextColor(Color.parseColor("#2DBC95"));
 
@@ -235,8 +393,6 @@ public class Car extends AppCompatActivity {
 
                 userID = auth.getCurrentUser().getUid();
                 DocumentReference userData = db.collection("vehicles")
-                        .document(userID)
-                        .collection("vehicles")
                         .document(vehicleUID);
 
                 userData.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -287,8 +443,6 @@ public class Car extends AppCompatActivity {
 
                 userID = auth.getCurrentUser().getUid();
                 DocumentReference userData = db.collection("vehicles")
-                        .document(userID)
-                        .collection("vehicles")
                         .document(vehicleUID);
 
                 userData.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -339,6 +493,7 @@ public class Car extends AppCompatActivity {
                     return;
                 }
 
+                addFuelUsageRecordToDataBase(newFuelLevel);
                 changeFuelLevelInDataBase(newFuelLevel, view);
 
             }
@@ -359,6 +514,7 @@ public class Car extends AppCompatActivity {
                 double refilledNumber = Double.parseDouble(refilledFuel);
                 String newLevel = String.valueOf(acctualFuelLevel + refilledNumber);
 
+                addFuelUsageRecordToDataBase(newLevel);
                 changeFuelLevelInDataBase(newLevel, view);
 
             }
@@ -452,8 +608,6 @@ public class Car extends AppCompatActivity {
 
 
         db.collection("vehicles")
-                .document(userID)
-                .collection("vehicles")
                 .document(vehicleUID)
                 .get(Source.SERVER)
                 .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
@@ -523,7 +677,7 @@ public class Car extends AppCompatActivity {
                     public void run() {
                         time++;
                         timerView.setTextColor(Color.parseColor("#bc422d"));
-                        timerView.setText("  " + getTimerText());
+                        timerView.setText(getTimerText());
                     }
                 });
             }
@@ -546,7 +700,7 @@ public class Car extends AppCompatActivity {
     private void endTimer(){
         timerView.setTextColor(Color.parseColor("#bbbbbb"));
         timerTask.cancel();
-        timerView.setText("  00:00:00");
+        timerView.setText("00:00:00");
         timeSaved = time;
         time = 0;
     }
@@ -555,8 +709,6 @@ public class Car extends AppCompatActivity {
 
         userID = auth.getCurrentUser().getUid();
         DocumentReference userData = db.collection("vehicles")
-                .document(userID)
-                .collection("vehicles")
                 .document(vehicleUID);
 
         userData.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -592,6 +744,52 @@ public class Car extends AppCompatActivity {
             }
         });
 
+
+    }
+
+    private void addFuelUsageRecordToDataBase(String newFuelLevel){
+
+        double newFL = Double.parseDouble(newFuelLevel);
+        double fuelS = Double.parseDouble(fuelLevelStored);
+        double volumen = Math.abs(newFL - fuelS);
+
+        boolean delivered;
+        if(newFL > fuelS){
+            delivered = true;
+        }
+        else if(newFL < fuelS){
+            delivered = false;
+        }
+        else {
+            return;
+        }
+
+
+        db.collection("userVehicles")
+                .whereEqualTo("userID", userID)
+                .whereEqualTo("vehicleID", vehicleUID)
+                .get(Source.SERVER)
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful() && !task.getResult().isEmpty()) {
+                            QueryDocumentSnapshot document = (QueryDocumentSnapshot) task.getResult().getDocuments().get(0);
+                            String documentId = document.getId();
+
+                            double uFuel = document.getDouble("usedFuel");
+                            double dFuel = document.getDouble("deliveredFuel");
+
+                            if (delivered) {
+                                db.collection("userVehicles").document(documentId)
+                                        .update("deliveredFuel", dFuel + volumen);
+                            } else {
+                                db.collection("userVehicles").document(documentId)
+                                        .update("usedFuel", uFuel + volumen);
+                            }
+
+                        }
+                    }
+                });
 
     }
 

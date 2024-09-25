@@ -25,6 +25,7 @@ public class noCarsPage extends AppCompatActivity {
     FirebaseUser user;
     Button addCarButton;
     String userID;
+    String nickname;
 
     TextView nick;
 
@@ -58,6 +59,7 @@ public class noCarsPage extends AppCompatActivity {
                     @Override
                     public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
                         nick.setText("Hi, " + value.getString("nick"));
+                        nickname = value.getString("nick");
                     }
                 });
 
@@ -67,6 +69,7 @@ public class noCarsPage extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), CarAdder.class);
+                intent.putExtra("nickname", nickname);
                 startActivity(intent);
                 finish();
             }
