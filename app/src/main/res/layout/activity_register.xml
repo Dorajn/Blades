@@ -32,7 +32,7 @@
             android:layout_height="wrap_content"
             android:hint="Nick"
             android:layout_below="@+id/registerText"
-            android:layout_marginTop="50dp"
+            android:layout_marginTop="40dp"
             android:id="@+id/editTextNick"
             android:drawableStart="@drawable/img_person"
             android:drawablePadding="10dp"

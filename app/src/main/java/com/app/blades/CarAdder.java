@@ -4,6 +4,7 @@ import static android.content.ContentValues.TAG;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -50,11 +51,43 @@ public class CarAdder extends AppCompatActivity {
                 String mileage = inputVehicleMileage.getText().toString();
                 String petrol = inputVehicleCurrFuelLevel.getText().toString();
 
-                addDataToDataBase(vName, mileage, petrol);
+                if(checkConstraints(vName, mileage, petrol))
+                    addDataToDataBase(vName, mileage, petrol);
 
             }
         });
 
+    }
+
+    private boolean checkConstraints(String name, String mileage, String petrol){
+
+        //check if empty
+        if(TextUtils.isEmpty(name)){
+            Toast.makeText(CarAdder.this, "Enter vehicle name", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if(TextUtils.isEmpty(mileage)){
+            Toast.makeText(CarAdder.this, "Enter vehicle mileage", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if(TextUtils.isEmpty(petrol)){
+            Toast.makeText(CarAdder.this, "Enter vehicle fuel level", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if(name.length() > LocalStorage.maxVehicleNameLenght){
+            Toast.makeText(CarAdder.this, "Vehicle name is too long", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if (mileage == null || !mileage.matches("\\d+")) {
+            Toast.makeText(CarAdder.this, "Mileage must be positive integer", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if (petrol == null || !petrol.matches("\\d*\\.?\\d+")) {
+            Toast.makeText(CarAdder.this, "Fuel level must be positive number", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        return true;
     }
 
     @Override
