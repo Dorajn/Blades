@@ -2,6 +2,7 @@ package com.app.blades;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -68,7 +69,12 @@ public class Settings extends AppCompatActivity {
         apply.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                double newPrice = Double.parseDouble(fuelPriceEditText.getText().toString());
+
+                String fp = fuelPriceEditText.getText().toString();
+                if(!checkFuelConstraints(fp))
+                    return;
+
+                double newPrice = Double.parseDouble(fp);
 
                 if (newPrice > 0) {
 
@@ -94,6 +100,9 @@ public class Settings extends AppCompatActivity {
                         }
                     });
 
+                }
+                else{
+                    Toast.makeText(view.getContext(), "Fuel price can't be zero", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -124,6 +133,22 @@ public class Settings extends AppCompatActivity {
         Intent intent = new Intent(this, CarList.class);
         startActivity(intent);
         finish();
+    }
+
+    private boolean checkFuelConstraints(String fuelPrice){
+
+        //check if empty
+        if(TextUtils.isEmpty(fuelPrice)){
+            Toast.makeText(Settings.this, "Enter fuel price ", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if (fuelPrice == null || !fuelPrice.matches("\\d*\\.?\\d+")) {
+            Toast.makeText(Settings.this, "Fuel price must be positive number", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        return true;
+
     }
 
 }

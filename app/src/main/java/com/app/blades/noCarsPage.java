@@ -60,6 +60,7 @@ public class noCarsPage extends AppCompatActivity {
                     public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
                         nick.setText("Hi, " + value.getString("nick"));
                         nickname = value.getString("nick");
+                        LocalStorage.userNick = nickname;
                     }
                 });
 

@@ -139,6 +139,7 @@ public class CarList extends AppCompatActivity {
                     public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
                         nick.setText("Hi, " + value.getString("nick"));
                         nickname = value.getString("nick");
+                        LocalStorage.userNick = nickname;
                     }
                 });
 
@@ -147,6 +148,10 @@ public class CarList extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+
+        for (int i = 0; i < 5; i++) {
+            tiles[i].setVisibility(View.INVISIBLE);
+        }
 
         //sets number of tiles visible on screen depending on vehicle counter
         db.collection("users")

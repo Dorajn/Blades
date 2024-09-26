@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:cardElevation="10dp"
+    app:cardCornerRadius="16dp">
+
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#474747"
+        android:paddingBottom="35dp"
+        >
+
+        <TextView
+            android:id="@+id/carSettingsText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
+            android:text="Vehicle settings"
+            style="@style/TEXT"
+            android:textStyle="bold"
+            android:textSize="22dp" />
+
+        <TextView
+            android:id="@+id/carSettingsInfo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="5dp"
+            android:text="There you can menage your vehicle"
+            android:layout_below="@id/carSettingsText"
+            style="@style/TEXT"
+            android:textStyle="bold"
+            android:textSize="14dp" />
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/carSettingsInfo"
+            android:layout_marginHorizontal="45dp"
+            android:layout_marginTop="15dp">
+
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:text="remove car member"
+                android:background="@drawable/go_back_button"
+                android:id="@+id/removeMember"
+                android:textColor="@color/cyan"
+                style="@style/BUTTON"/>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:text="delete vehicle"
+                android:background="@drawable/dismiss_button"
+                android:id="@+id/deleteVehicle"
+                android:layout_below="@+id/removeMember"
+                style="@style/BUTTON"/>
+
+
+
+        </RelativeLayout>
+
+
+    </RelativeLayout>
+
+</androidx.cardview.widget.CardView>
