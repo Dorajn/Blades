@@ -20,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -31,7 +32,9 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.Source;
@@ -261,14 +264,33 @@ public class Car extends AppCompatActivity {
                                         DocumentSnapshot document = querySnapshot.getDocuments().get(0);
                                         String type = document.getString("relationType");
 
-                                        if(type.equals("owner")){
-                                            dialogSettings.dismiss();
-                                            dialogRemoveMember.show();
-                                        }
-                                        else{
-                                            Toast.makeText(Car.this, "You need to be vehicle owner to remove members", Toast.LENGTH_LONG).show();
-                                        }
+                                        db.collection("vehicles").document(vehicleUID)
+                                                .get(Source.SERVER)
+                                                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                                    @Override
+                                                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                                        if (task.isSuccessful()) {
+                                                            DocumentSnapshot document = task.getResult();
+                                                            if (document.exists()) {
+                                                                Long memberCount = document.getLong("memberCount");
 
+                                                                if(memberCount == 1){
+                                                                    Toast.makeText(Car.this, "In this car there are no members besides you", Toast.LENGTH_LONG).show();
+                                                                }
+                                                                else{
+                                                                    if(type.equals("owner")){
+                                                                        dialogSettings.dismiss();
+                                                                        dialogRemoveMember.show();
+                                                                    }
+                                                                    else{
+                                                                        Toast.makeText(Car.this, "You need to be vehicle owner to remove members", Toast.LENGTH_LONG).show();
+                                                                    }
+                                                                }
+
+                                                            }
+                                                        }
+                                                    }
+                                                });
                                     }
 
                                 }
@@ -292,7 +314,6 @@ public class Car extends AppCompatActivity {
         deleteVehicle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                dialogSettings.dismiss();
                 alertDeletion.show();
             }
         });
