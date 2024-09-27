@@ -66,12 +66,25 @@
             <androidx.appcompat.widget.AppCompatButton
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/addMemberEditTextDialog"
-                android:layout_marginTop="15dp"
+                android:layout_below="@id/progressBarAddMember"
                 android:text="Add member"
                 android:background="@drawable/rounded_button"
                 android:id="@+id/addMemberAcceptButton"
                 style="@style/BUTTON"/>
+
+            <ProgressBar
+                android:id="@+id/progressBarAddMember"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:max="100"
+                android:progress="0"
+                android:progressTint="@color/cyan"
+                android:layout_marginHorizontal="10dp"
+                android:layout_marginBottom="5dp"
+                android:layout_marginTop="10dp"
+                android:layout_below="@id/addMemberEditTextDialog"
+                />
 
         </RelativeLayout>
 

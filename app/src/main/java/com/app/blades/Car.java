@@ -16,6 +16,7 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -73,6 +74,8 @@ public class Car extends AppCompatActivity {
     TimerTask timerTask;
     double time = 0;
     double timeSaved = 0;
+
+    ProgressBar progressBarAddMember, progressBarRemoveMember, progressBarDeleteVehicle;
 
 
     @Override
@@ -213,12 +216,14 @@ public class Car extends AppCompatActivity {
 
         addMemberEditText = dialogAddMember.findViewById(R.id.addMemberEditTextDialog);
         addMemberButton = dialogAddMember.findViewById(R.id.addMemberAcceptButton);
+        progressBarAddMember = dialogAddMember.findViewById(R.id.progressBarAddMember);
 
         deleteVehicle = dialogSettings.findViewById(R.id.deleteVehicle);
         removeMember = dialogSettings.findViewById(R.id.removeMember);
 
         acceptRemoval = dialogRemoveMember.findViewById(R.id.acceptRemoval);
         removeMemberEditText = dialogRemoveMember.findViewById(R.id.removeMemberEditText);
+        progressBarRemoveMember = dialogRemoveMember.findViewById(R.id.progressBarRemoveMember);
 
         yes = alertYesNo.findViewById(R.id.yes);
         no = alertYesNo.findViewById(R.id.no);
@@ -369,6 +374,8 @@ public class Car extends AppCompatActivity {
         addMemberButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                progressBarAddMember.setProgress(50);
+
                 String nickname = addMemberEditText.getText().toString();
 
                 db.collection("users")
@@ -377,6 +384,7 @@ public class Car extends AppCompatActivity {
                         .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                             @Override
                             public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                progressBarAddMember.setProgress(100);
                                 if (task.isSuccessful()) {
                                     QuerySnapshot querySnapshot = task.getResult();
                                     if (querySnapshot != null && !querySnapshot.isEmpty()) {
@@ -388,6 +396,7 @@ public class Car extends AppCompatActivity {
                                         userData.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                             @Override
                                             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+
                                                 DocumentSnapshot document = task.getResult();
                                                 if(document.exists()){
 
@@ -416,7 +425,6 @@ public class Car extends AppCompatActivity {
                                                                     Log.e(TAG, "Błąd przy aktualizacji liczby pojazdów: ", e);
                                                                 });
 
-
                                                         DocumentReference vehicleData = db.collection("vehicles").document(vehicleUID);
                                                         vehicleData.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                                             @Override
@@ -425,7 +433,6 @@ public class Car extends AppCompatActivity {
                                                                 if(document2.exists()){
 
                                                                     Long memberCount = document2.getLong("memberCount");
-                                                                    Log.d("Pizda", String.valueOf(memberCount));
 
                                                                     vehicleData.update("memberCount", (memberCount + 1))
                                                                             .addOnSuccessListener(aVoid -> {
@@ -439,7 +446,6 @@ public class Car extends AppCompatActivity {
 
                                                             }
                                                         });
-
 
                                                         Toast.makeText(Car.this, nickname + " added as member", Toast.LENGTH_SHORT).show();
                                                         dialogAddMember.dismiss();
@@ -741,6 +747,10 @@ public class Car extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+
+        progressBarAddMember.setProgress(0);
+        progressBarRemoveMember.setProgress(0);
+        //progressBarDeleteVehicle.setProgress(0);
 
         resetButtons();
         resetTrackDialog();
@@ -1052,7 +1062,6 @@ public class Car extends AppCompatActivity {
 
                                                     //changing some variables
                                                     Toast.makeText(Car.this, "Vehicle deleted", Toast.LENGTH_SHORT).show();
-                                                    dialogSettings.dismiss();
 
 
                                                     LocalStorage.vehicleCount--;
@@ -1066,6 +1075,8 @@ public class Car extends AppCompatActivity {
                                                         startActivity(intent);
                                                         finish();
                                                     }
+
+                                                    dialogSettings.dismiss();
 
                                                 })
                                                 .addOnFailureListener(e -> {
@@ -1089,6 +1100,7 @@ public class Car extends AppCompatActivity {
 
     private void deleteMember(String membernick, View view){
 
+        progressBarRemoveMember.setProgress(75);
         db.collection("userVehicles")
                 .whereEqualTo("nickname", membernick)
                 .whereEqualTo("vehicleID", vehicleUID)
@@ -1102,7 +1114,7 @@ public class Car extends AppCompatActivity {
                             String memberID = document.getString("userID");
                             DocumentReference docRef = document.getReference();
                             docRef.delete();
-
+                            progressBarRemoveMember.setProgress(100);
 
                             //decreasing vehicle count in member document
                             DocumentReference memberDocument = db.collection("users").document(memberID);

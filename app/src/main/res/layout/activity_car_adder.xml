@@ -98,7 +98,21 @@
             android:text="create vehicle"
             android:background="@drawable/rounded_button"
             android:id="@+id/createVB"
-            style="@style/BUTTON"/>
+            style="@style/BUTTON" />
+
+        <ProgressBar
+            android:id="@+id/progressBarAddCar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:max="100"
+            android:progress="0"
+            android:progressTint="@color/cyan"
+            android:layout_marginHorizontal="30dp"
+            android:layout_marginBottom="10dp"
+            android:layout_above="@id/goBack"
+            />
+
 
 
     </RelativeLayout>
