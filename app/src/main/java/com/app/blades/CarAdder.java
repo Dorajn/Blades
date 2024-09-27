@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -35,6 +36,7 @@ public class CarAdder extends AppCompatActivity {
     Button createVehicle, goBack;
     String userID;
     String nickname;
+    ProgressBar progressBar;
 
     FirebaseAuth mAuth;
     FirebaseFirestore db;
@@ -42,6 +44,7 @@ public class CarAdder extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        progressBar.setProgress(0);
 
         createVehicle.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -103,6 +106,7 @@ public class CarAdder extends AppCompatActivity {
         inputVehicleCurrFuelLevel = findViewById(R.id.editTextVehiclePetrol);
         createVehicle = findViewById(R.id.createVB);
         goBack = findViewById(R.id.goBack);
+        progressBar = findViewById(R.id.progressBarAddCar);
 
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
@@ -145,6 +149,8 @@ public class CarAdder extends AppCompatActivity {
 
     public void addDataToDataBase(String vehicleName, String vehicleMileage, String vehicleFuelLevel){
 
+        progressBar.setProgress(25);
+
         userID = mAuth.getCurrentUser().getUid();
 
         Map<String, Object> vehicle = new HashMap<>();
@@ -170,22 +176,18 @@ public class CarAdder extends AppCompatActivity {
                         userVehicle.put("deliveredFuel", 0);
                         db.collection("userVehicles").add(userVehicle);
 
+                        progressBar.setProgress(50);
+
                         DocumentReference userData = db.collection("users").document(userID);
                         userData.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                             @Override
                             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                                 DocumentSnapshot document = task.getResult();
                                 if(document.exists()){
-
                                     Long vehicleCount = document.getLong("vehicleCount");
+                                    userData.update("vehicleCount", (vehicleCount + 1));
 
-                                    userData.update("vehicleCount", (vehicleCount + 1))
-                                            .addOnSuccessListener(aVoid -> {
-                                                Log.d(TAG, "Liczba pojazdów zaktualizowana pomyślnie.");
-                                            })
-                                            .addOnFailureListener(e -> {
-                                                Log.e(TAG, "Błąd przy aktualizacji liczby pojazdów: ", e);
-                                            });
+                                    progressBar.setProgress(100);
 
                                 }
 
