@@ -37,6 +37,7 @@ public class CarAdder extends AppCompatActivity {
     String userID;
     String nickname;
     ProgressBar progressBar;
+    DataBaseMenager dbMenager;
 
     FirebaseAuth mAuth;
     FirebaseFirestore db;
@@ -45,21 +46,6 @@ public class CarAdder extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         progressBar.setProgress(0);
-
-        createVehicle.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                String vName = inputVehicleName.getText().toString();
-                String mileage = inputVehicleMileage.getText().toString();
-                String petrol = inputVehicleCurrFuelLevel.getText().toString();
-
-                if(checkConstraints(vName, mileage, petrol))
-                    addDataToDataBase(vName, mileage, petrol);
-
-            }
-        });
-
     }
 
     private boolean checkConstraints(String name, String mileage, String petrol){
@@ -108,9 +94,25 @@ public class CarAdder extends AppCompatActivity {
         goBack = findViewById(R.id.goBack);
         progressBar = findViewById(R.id.progressBarAddCar);
 
+        dbMenager = new DataBaseMenager();
+
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
+        createVehicle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                String vName = inputVehicleName.getText().toString();
+                String mileage = inputVehicleMileage.getText().toString();
+                String petrol = inputVehicleCurrFuelLevel.getText().toString();
+
+                if(checkConstraints(vName, mileage, petrol)) {
+                    dbMenager.addVehicle(vName, mileage, petrol, nickname, progressBar, CarAdder.this);
+                }
+
+            }
+        });
 
         goBack.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -145,70 +147,6 @@ public class CarAdder extends AppCompatActivity {
             startActivity(intent);
             finish();
         }
-    }
-
-    public void addDataToDataBase(String vehicleName, String vehicleMileage, String vehicleFuelLevel){
-
-        progressBar.setProgress(25);
-
-        userID = mAuth.getCurrentUser().getUid();
-
-        Map<String, Object> vehicle = new HashMap<>();
-        vehicle.put("vehicleName", vehicleName);
-        vehicle.put("mileage", vehicleMileage);
-        vehicle.put("fuelLevel", vehicleFuelLevel);
-        vehicle.put("memberCount", 1);
-
-
-        db.collection("vehicles").add(vehicle)
-                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                    @Override
-                    public void onSuccess(DocumentReference documentReference) {
-                        Toast.makeText(CarAdder.this, "Vehicle created.", Toast.LENGTH_SHORT).show();
-                        LocalStorage.currentNewVehicleUID = documentReference.getId();
-
-                        Map<String, Object> userVehicle = new HashMap<>();
-                        userVehicle.put("userID", userID);
-                        userVehicle.put("vehicleID", documentReference.getId());
-                        userVehicle.put("relationType", "owner");
-                        userVehicle.put("nickname", nickname);
-                        userVehicle.put("usedFuel", 0);
-                        userVehicle.put("deliveredFuel", 0);
-                        db.collection("userVehicles").add(userVehicle);
-
-                        progressBar.setProgress(50);
-
-                        DocumentReference userData = db.collection("users").document(userID);
-                        userData.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                DocumentSnapshot document = task.getResult();
-                                if(document.exists()){
-                                    Long vehicleCount = document.getLong("vehicleCount");
-                                    userData.update("vehicleCount", (vehicleCount + 1));
-
-                                    progressBar.setProgress(100);
-
-                                }
-
-                            }
-                        });
-
-
-                        LocalStorage.vehicleCount += 1;
-                        LocalStorage.newAddedCar = true;
-
-                        Intent intent = new Intent(getApplicationContext(), Car.class);
-                        startActivity(intent);
-                        finish();
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(CarAdder.this, "Oops, something went wrong.", Toast.LENGTH_SHORT).show();
-                    }
-                });
     }
 
 }

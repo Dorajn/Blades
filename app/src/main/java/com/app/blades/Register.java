@@ -34,6 +34,7 @@ public class Register extends AppCompatActivity {
     ProgressBar progressBar;
     FirebaseFirestore db;
     String userID;
+    DataBaseMenager dbMenager;
 
     @Override
     public void onStart() {
@@ -41,34 +42,7 @@ public class Register extends AppCompatActivity {
 
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if(currentUser != null){
-
-            userID = mAuth.getCurrentUser().getUid();
-
-            db.collection("users")
-                    .document(userID)
-                    .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                            DocumentSnapshot document = task.getResult();
-                            if(document.exists()){
-                                Long vehicleCount = document.getLong("vehicleCount");
-                                LocalStorage.vehicleCount = vehicleCount;
-
-                                if(vehicleCount > 0){
-                                    Intent intent = new Intent(getApplicationContext(), CarList.class);
-                                    startActivity(intent);
-                                    finish();
-                                }
-                                else{
-                                    Intent intent = new Intent(getApplicationContext(), noCarsPage.class);
-                                    startActivity(intent);
-                                    finish();
-                                }
-                            }
-
-                        }
-                    });
-
+            dbMenager.changeIntentDependingOnVehicleCount(Register.this);
         }
     }
 
@@ -79,6 +53,7 @@ public class Register extends AppCompatActivity {
 
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
+        dbMenager = new DataBaseMenager();
 
         inputEmail = findViewById(R.id.editTextEmail);
         inputNick = findViewById(R.id.editTextNick);
