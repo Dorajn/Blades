@@ -47,7 +47,13 @@ import java.util.TimerTask;
 
 public class Car extends AppCompatActivity {
 
-    TextView vehicleName, vehicleMileage, vehicleFuelLevel, cost, timeValue, avgSpeed, stat;
+    TextView vehicleName;
+    TextView vehicleMileage;
+    TextView vehicleFuelLevel;
+    TextView cost;
+    static TextView timeValue;
+    TextView avgSpeed;
+    TextView stat;
     FirebaseFirestore db;
     FirebaseAuth auth;
     String userID;
@@ -69,11 +75,12 @@ public class Car extends AppCompatActivity {
     Dialog alertYesNo;
 
     //timer
-    TextView timerView;
+    static TextView timerView;
     Timer timer;
     TimerTask timerTask;
-    double time = 0;
+    static double time = 0;
     double timeSaved = 0;
+    Intent intentTimer;
 
     ProgressBar progressBarAddMember, progressBarRemoveMember, progressBarDeleteVehicle;
 
@@ -105,8 +112,8 @@ public class Car extends AppCompatActivity {
         stat = findViewById(R.id.statistics);
         settings = findViewById(R.id.carSettings);
 
-
         timer = new Timer();
+        intentTimer = new Intent(Car.this, TimerService.class);
 
         //dialogs
         dialogMileage = new Dialog(Car.this);
@@ -391,71 +398,89 @@ public class Car extends AppCompatActivity {
                                         DocumentSnapshot document = querySnapshot.getDocuments().get(0);
                                         String newMemberID = document.getId();
 
-                                        //changing vehicle count in member record
-                                        DocumentReference userData = db.collection("users").document(newMemberID);
-                                        userData.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                        db.collection("userVehicles")
+                                                .whereEqualTo("userID", newMemberID)
+                                                .whereEqualTo("vehicleID", vehicleUID)
+                                                .get(Source.SERVER)
+                                                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                    @Override
+                                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                        if (task.isSuccessful()) {
+                                                            QuerySnapshot querySnapshot = task.getResult();
+                                                            if (querySnapshot != null && !querySnapshot.isEmpty()) {
+                                                                Toast.makeText(Car.this, "User is already member", Toast.LENGTH_SHORT).show();
+                                                                progressBarAddMember.setProgress(0);
+                                                            } else {
+                                                                //changing vehicle count in member record
+                                                                DocumentReference userData = db.collection("users").document(newMemberID);
+                                                                userData.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                                                    @Override
+                                                                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
 
-                                                DocumentSnapshot document = task.getResult();
-                                                if(document.exists()){
+                                                                        DocumentSnapshot document = task.getResult();
+                                                                        if(document.exists()){
 
-                                                    Long vehicleCount = document.getLong("vehicleCount");
+                                                                            Long vehicleCount = document.getLong("vehicleCount");
 
-                                                    if(vehicleCount == 5){
-                                                        Toast.makeText(Car.this, nickname + " has reached vehicle limit!", Toast.LENGTH_LONG).show();
-                                                    }
-                                                    else{
-                                                        //adding record to relation table
-                                                        Map<String, Object> userVehicle = new HashMap<>();
-                                                        userVehicle.put("userID", newMemberID);
-                                                        userVehicle.put("vehicleID", vehicleUID);
-                                                        userVehicle.put("relationType", "member");
-                                                        userVehicle.put("nickname", nickname);
-                                                        userVehicle.put("usedFuel", 0);
-                                                        userVehicle.put("deliveredFuel", 0);
-                                                        db.collection("userVehicles").add(userVehicle);
+                                                                            if(vehicleCount == 5){
+                                                                                Toast.makeText(Car.this, nickname + " has reached vehicle limit!", Toast.LENGTH_LONG).show();
+                                                                            }
+                                                                            else{
+                                                                                //adding record to relation table
+                                                                                Map<String, Object> userVehicle = new HashMap<>();
+                                                                                userVehicle.put("userID", newMemberID);
+                                                                                userVehicle.put("vehicleID", vehicleUID);
+                                                                                userVehicle.put("relationType", "member");
+                                                                                userVehicle.put("nickname", nickname);
+                                                                                userVehicle.put("usedFuel", 0);
+                                                                                userVehicle.put("deliveredFuel", 0);
+                                                                                db.collection("userVehicles").add(userVehicle);
 
-                                                        //changing vehicle count
-                                                        userData.update("vehicleCount", (vehicleCount + 1))
-                                                                .addOnSuccessListener(aVoid -> {
-                                                                    Log.d(TAG, "Liczba pojazdów zaktualizowana pomyślnie.");
-                                                                })
-                                                                .addOnFailureListener(e -> {
-                                                                    Log.e(TAG, "Błąd przy aktualizacji liczby pojazdów: ", e);
+                                                                                //changing vehicle count
+                                                                                userData.update("vehicleCount", (vehicleCount + 1))
+                                                                                        .addOnSuccessListener(aVoid -> {
+                                                                                            Log.d(TAG, "Liczba pojazdów zaktualizowana pomyślnie.");
+                                                                                        })
+                                                                                        .addOnFailureListener(e -> {
+                                                                                            Log.e(TAG, "Błąd przy aktualizacji liczby pojazdów: ", e);
+                                                                                        });
+
+                                                                                DocumentReference vehicleData = db.collection("vehicles").document(vehicleUID);
+                                                                                vehicleData.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                                                                    @Override
+                                                                                    public void onComplete(@NonNull Task<DocumentSnapshot> task2) {
+                                                                                        DocumentSnapshot document2 = task2.getResult();
+                                                                                        if(document2.exists()){
+
+                                                                                            Long memberCount = document2.getLong("memberCount");
+
+                                                                                            vehicleData.update("memberCount", (memberCount + 1))
+                                                                                                    .addOnSuccessListener(aVoid -> {
+                                                                                                        Log.d(TAG, "Liczba pojazdów zaktualizowana pomyślnie.");
+                                                                                                    })
+                                                                                                    .addOnFailureListener(e -> {
+                                                                                                        Log.e(TAG, "Błąd przy aktualizacji liczby pojazdów: ", e);
+                                                                                                    });
+
+                                                                                        }
+
+                                                                                    }
+                                                                                });
+
+                                                                                Toast.makeText(Car.this, nickname + " added as member", Toast.LENGTH_SHORT).show();
+                                                                                dialogAddMember.dismiss();
+                                                                            }
+
+
+                                                                        }
+
+                                                                    }
                                                                 });
-
-                                                        DocumentReference vehicleData = db.collection("vehicles").document(vehicleUID);
-                                                        vehicleData.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                                            @Override
-                                                            public void onComplete(@NonNull Task<DocumentSnapshot> task2) {
-                                                                DocumentSnapshot document2 = task2.getResult();
-                                                                if(document2.exists()){
-
-                                                                    Long memberCount = document2.getLong("memberCount");
-
-                                                                    vehicleData.update("memberCount", (memberCount + 1))
-                                                                            .addOnSuccessListener(aVoid -> {
-                                                                                Log.d(TAG, "Liczba pojazdów zaktualizowana pomyślnie.");
-                                                                            })
-                                                                            .addOnFailureListener(e -> {
-                                                                                Log.e(TAG, "Błąd przy aktualizacji liczby pojazdów: ", e);
-                                                                            });
-
-                                                                }
+                                                            }
 
                                                             }
-                                                        });
-
-                                                        Toast.makeText(Car.this, nickname + " added as member", Toast.LENGTH_SHORT).show();
-                                                        dialogAddMember.dismiss();
                                                     }
-
-
-                                                }
-
-                                            }
-                                        });
+                                                });
                                     } else {
                                         Toast.makeText(Car.this, "No user foud with this nickname", Toast.LENGTH_SHORT).show();
                                     }
@@ -691,7 +716,7 @@ public class Car extends AppCompatActivity {
             }
         });
 
-        optionEnterFuel.setOnClickListener(new View.OnClickListener() {
+            optionEnterFuel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 dialogRefuelOption.dismiss();
@@ -826,22 +851,7 @@ public class Car extends AppCompatActivity {
     }
 
     private void startTimer(){
-
-        timerTask = new TimerTask() {
-            @Override
-            public void run() {
-
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        time++;
-                        timerView.setTextColor(Color.parseColor("#bc422d"));
-                        timerView.setText(getTimerText());
-                    }
-                });
-            }
-        };
-        timer.schedule(timerTask, 0, 1000);
+        startService(intentTimer);
     }
 
     private String getTimerText() {
@@ -858,7 +868,7 @@ public class Car extends AppCompatActivity {
 
     private void endTimer(){
         timerView.setTextColor(Color.parseColor("#bbbbbb"));
-        timerTask.cancel();
+        stopService(intentTimer);
         timerView.setText("00:00:00");
         timeSaved = time;
         time = 0;

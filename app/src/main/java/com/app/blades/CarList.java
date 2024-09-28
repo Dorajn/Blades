@@ -184,7 +184,7 @@ public class CarList extends AppCompatActivity {
                                                     int finalI = i;
                                                     db.collection("vehicles")
                                                             .document(vehicleID)
-                                                            .get(Source.SERVER)
+                                                            .get(Source.CACHE)
                                                             .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                                                 @Override
                                                                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {

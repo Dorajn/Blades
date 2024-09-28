@@ -38,17 +38,7 @@ public class Register extends AppCompatActivity {
     @Override
     public void onStart() {
         super.onStart();
-    }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_register);
-
-        db = FirebaseFirestore.getInstance();
-        mAuth = FirebaseAuth.getInstance();
-
-        //intent change
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if(currentUser != null){
 
@@ -80,7 +70,15 @@ public class Register extends AppCompatActivity {
                     });
 
         }
+    }
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_register);
+
+        db = FirebaseFirestore.getInstance();
+        mAuth = FirebaseAuth.getInstance();
 
         inputEmail = findViewById(R.id.editTextEmail);
         inputNick = findViewById(R.id.editTextNick);

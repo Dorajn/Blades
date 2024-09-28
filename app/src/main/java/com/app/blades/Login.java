@@ -36,12 +36,10 @@ public class Login extends AppCompatActivity {
     @Override
     public void onStart() {
         super.onStart();
-        mAuth = FirebaseAuth.getInstance();
-        db = FirebaseFirestore.getInstance();
-
         FirebaseUser currentUser = mAuth.getCurrentUser();
 
         if(currentUser != null){
+            Log.d("sraczkan", "gowno");
             changeIntentWithCarNumCheck();
         }
     }
