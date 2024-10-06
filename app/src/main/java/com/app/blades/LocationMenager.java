@@ -78,7 +78,7 @@ public class LocationMenager {
             // for ActivityCompat#requestPermissions for more details.
             return;
         }
-            fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallBack, null);
+        fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallBack, null);
     }
 
     public void endLocationUpdates() {
@@ -90,8 +90,8 @@ public class LocationMenager {
     private void updateUI(){
         x.setText(String.valueOf(location.getLatitude()));
         y.setText(String.valueOf(location.getLongitude()));
-        meters.setText("Meters driven: " + metersDriven);
-        meters.setText("Meters driven: " + String.format("%.2f", metersDriven));
+        meters.setText("Meters driven: _" + String.format("%.2f", metersDriven));
+        Log.d("Lokalizacja", String.valueOf(metersDriven));
     }
 
     private void calculateMetersDriven(){

@@ -56,7 +56,7 @@ public class Car extends AppCompatActivity {
     TextView cost;
     static TextView timeValue;
     TextView avgSpeed;
-    TextView stat;
+    ImageView stat;
     TextView metersDriven, x, y;
     FirebaseFirestore db;
     FirebaseAuth auth;
@@ -97,7 +97,7 @@ public class Car extends AppCompatActivity {
         setContentView(R.layout.activity_car);
 
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, 99);
+            requestPermissions(new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, 1);
             //Toast.makeText(MainActivity.this, "permissions denied.", Toast.LENGTH_SHORT).show();
         }
 
@@ -692,7 +692,7 @@ public class Car extends AppCompatActivity {
             }
         });
 
-            optionEnterFuel.setOnClickListener(new View.OnClickListener() {
+        optionEnterFuel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 dialogRefuelOption.dismiss();
@@ -719,10 +719,7 @@ public class Car extends AppCompatActivity {
         trackRide.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                trackRide.setVisibility(View.INVISIBLE);
-                endTracking.setVisibility(View.VISIBLE);
-                changeCar.setVisibility(View.INVISIBLE);
-                changeCarInactive.setVisibility(View.VISIBLE);
+                changeVisualsToTrack();
                 locationMenager.startLocationUpdates();
                 startTimer();
             }
@@ -732,14 +729,9 @@ public class Car extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 locationMenager.endLocationUpdates();
-                endTracking.setVisibility(View.INVISIBLE);
-                trackRide.setVisibility(View.VISIBLE);
                 timeValue.setText("Time: " + getTimerText());
                 dialogTrack.show();
-
-                changeCarInactive.setVisibility(View.INVISIBLE);
-                changeCar.setVisibility(View.VISIBLE);
-
+                changeVisualsToNormal();
                 endTimer();
             }
         });
@@ -810,7 +802,6 @@ public class Car extends AppCompatActivity {
     }
 
     private void endTimer(){
-        timerView.setTextColor(Color.parseColor("#bbbbbb"));
         stopService(intentTimer);
         timerView.setText("00:00:00");
         timeSaved = time;
@@ -1058,5 +1049,33 @@ public class Car extends AppCompatActivity {
                 Toast.makeText(Car.this, "This app needs location tracking permission", Toast.LENGTH_LONG).show();
             }
         }
+    }
+
+    private void changeVisualsToTrack(){
+        fuelChange.setVisibility(View.INVISIBLE);
+        mileage.setVisibility(View.INVISIBLE);
+        member.setVisibility(View.INVISIBLE);
+        settings.setVisibility(View.INVISIBLE);
+        stat.setVisibility(View.INVISIBLE);
+        timerView.setVisibility(View.VISIBLE);
+
+        trackRide.setVisibility(View.INVISIBLE);
+        endTracking.setVisibility(View.VISIBLE);
+        changeCar.setVisibility(View.INVISIBLE);
+        changeCarInactive.setVisibility(View.VISIBLE);
+    }
+
+    private void changeVisualsToNormal(){
+        fuelChange.setVisibility(View.VISIBLE);
+        mileage.setVisibility(View.VISIBLE);
+        member.setVisibility(View.VISIBLE);
+        settings.setVisibility(View.VISIBLE);
+        stat.setVisibility(View.VISIBLE);
+        timerView.setVisibility(View.INVISIBLE);
+
+        endTracking.setVisibility(View.INVISIBLE);
+        trackRide.setVisibility(View.VISIBLE);
+        changeCarInactive.setVisibility(View.INVISIBLE);
+        changeCar.setVisibility(View.VISIBLE);
     }
 }
