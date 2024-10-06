@@ -120,7 +120,6 @@ public class Settings extends AppCompatActivity {
                     public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
 
                         double fPrice = (double) value.getDouble("fuelPrice");
-                        Log.d("witj", String.valueOf(fPrice));
                         LocalStorage.fuelPrice = fPrice;
                         infoCurrentFuelPrice.setText("Fuel price: " + String.valueOf(fPrice));
                     }

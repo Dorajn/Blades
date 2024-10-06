@@ -2,9 +2,11 @@ package com.app.blades;
 
 import static android.content.ContentValues.TAG;
 
+import android.Manifest;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -24,6 +26,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -54,6 +57,7 @@ public class Car extends AppCompatActivity {
     static TextView timeValue;
     TextView avgSpeed;
     TextView stat;
+    TextView metersDriven, x, y;
     FirebaseFirestore db;
     FirebaseAuth auth;
     String userID;
@@ -81,14 +85,21 @@ public class Car extends AppCompatActivity {
     static double time = 0;
     double timeSaved = 0;
     Intent intentTimer;
+    DataBaseMenager dbMenager;
 
     ProgressBar progressBarAddMember, progressBarRemoveMember, progressBarDeleteVehicle;
 
+    LocationMenager locationMenager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_car);
+
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, 99);
+            //Toast.makeText(MainActivity.this, "permissions denied.", Toast.LENGTH_SHORT).show();
+        }
 
         if(LocalStorage.newAddedCar){
             vehicleUID = LocalStorage.currentNewVehicleUID;
@@ -96,6 +107,8 @@ public class Car extends AppCompatActivity {
         else{
             vehicleUID = LocalStorage.currentVehicleUID;
         }
+
+        dbMenager = new DataBaseMenager();
 
         //initializing layout variables
         vehicleName = findViewById(R.id.carName);
@@ -111,6 +124,13 @@ public class Car extends AppCompatActivity {
         member = findViewById(R.id.addMember);
         stat = findViewById(R.id.statistics);
         settings = findViewById(R.id.carSettings);
+        metersDriven = findViewById(R.id.metersDriven);
+        x = findViewById(R.id.x);
+        y = findViewById(R.id.y);
+        x.setText("Not tracking");
+        y.setText("Not tracking");
+
+        locationMenager = new LocationMenager(Car.this, x, y, metersDriven);
 
         timer = new Timer();
         intentTimer = new Intent(Car.this, TimerService.class);
@@ -246,6 +266,7 @@ public class Car extends AppCompatActivity {
         yesDeletion.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                //dbMenager.deleteVehicle(Car.this, vehicleUID, dialogSettings);
                 deleteThisVehicle(view);
                 alertDeletion.dismiss();
             }
@@ -262,52 +283,7 @@ public class Car extends AppCompatActivity {
         removeMember.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                db.collection("userVehicles")
-                        .whereEqualTo("userID", userID)
-                        .whereEqualTo("vehicleID", vehicleUID)
-                        .get(Source.SERVER)
-                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                if(task.isSuccessful()){
-                                    QuerySnapshot querySnapshot = task.getResult();
-                                    if (querySnapshot != null && !querySnapshot.isEmpty()) {
-                                        DocumentSnapshot document = querySnapshot.getDocuments().get(0);
-                                        String type = document.getString("relationType");
-
-                                        db.collection("vehicles").document(vehicleUID)
-                                                .get(Source.SERVER)
-                                                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                                    @Override
-                                                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                                        if (task.isSuccessful()) {
-                                                            DocumentSnapshot document = task.getResult();
-                                                            if (document.exists()) {
-                                                                Long memberCount = document.getLong("memberCount");
-
-                                                                if(memberCount == 1){
-                                                                    Toast.makeText(Car.this, "In this car there are no members besides you", Toast.LENGTH_LONG).show();
-                                                                }
-                                                                else{
-                                                                    if(type.equals("owner")){
-                                                                        dialogSettings.dismiss();
-                                                                        dialogRemoveMember.show();
-                                                                    }
-                                                                    else{
-                                                                        Toast.makeText(Car.this, "You need to be vehicle owner to remove members", Toast.LENGTH_LONG).show();
-                                                                    }
-                                                                }
-
-                                                            }
-                                                        }
-                                                    }
-                                                });
-                                    }
-
-                                }
-                            }
-                        });
+                dbMenager.decideWhetherUserCanDeleteMembers(Car.this, vehicleUID, dialogSettings, dialogRemoveMember);
             }
         });
 
@@ -319,7 +295,7 @@ public class Car extends AppCompatActivity {
                     Toast.makeText(Car.this, "You can't remove yourself", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                deleteMember(nickname, view);
+                dbMenager.deleteMember(Car.this, nickname, vehicleUID, dialogRemoveMember);
             }
         });
 
@@ -479,7 +455,7 @@ public class Car extends AppCompatActivity {
                                                             }
 
                                                             }
-                                                    }
+                                                   }
                                                 });
                                     } else {
                                         Toast.makeText(Car.this, "No user foud with this nickname", Toast.LENGTH_SHORT).show();
@@ -747,6 +723,7 @@ public class Car extends AppCompatActivity {
                 endTracking.setVisibility(View.VISIBLE);
                 changeCar.setVisibility(View.INVISIBLE);
                 changeCarInactive.setVisibility(View.VISIBLE);
+                locationMenager.startLocationUpdates();
                 startTimer();
             }
         });
@@ -754,6 +731,7 @@ public class Car extends AppCompatActivity {
         endTracking.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                locationMenager.endLocationUpdates();
                 endTracking.setVisibility(View.INVISIBLE);
                 trackRide.setVisibility(View.VISIBLE);
                 timeValue.setText("Time: " + getTimerText());
@@ -783,44 +761,9 @@ public class Car extends AppCompatActivity {
         resetRefuelRefillDialog();
         resetMileageChangeDialog();
 
-        if(LocalStorage.newAddedCar){
-            vehicleUID = LocalStorage.currentNewVehicleUID;
-        }
-        else{
-            vehicleUID = LocalStorage.currentVehicleUID;
-        }
+        vehicleUID = LocalStorage.newAddedCar ? LocalStorage.currentNewVehicleUID : LocalStorage.currentVehicleUID;
+        dbMenager.gatherCarData(Car.this, vehicleUID, vehicleFuelLevel, vehicleMileage, vehicleName, fuelChange);
 
-
-        db.collection("vehicles")
-                .document(vehicleUID)
-                .get(Source.SERVER)
-                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                    @Override
-                    public void onSuccess(DocumentSnapshot document) {
-                        if(document.exists()){
-                            String name = (String) document.getData().get("vehicleName");
-                            mileageStored = (String) document.getData().get("mileage");
-                            fuelLevelStored = (String) document.getData().get("fuelLevel");
-
-                            if(Double.parseDouble(fuelLevelStored) <= LocalStorage.lowFuelWarning){
-                                fuelChange.setImageResource(R.drawable.baseline_local_gas_station_24_red);
-                            }
-                            else{
-                                fuelChange.setImageResource(R.drawable.baseline_local_gas_station_24_white);
-                            }
-
-                            vehicleName.setText(name);
-                            vehicleMileage.setText("Mileage: " + mileageStored);
-
-                            double fLevel = Double.parseDouble(fuelLevelStored);
-                            String fLevel2digits = String.format("%.2f", fLevel);
-                            vehicleFuelLevel.setText("Fuel: " + fLevel2digits);
-                        }
-                        else{
-                            Log.d("FireStore", "Vehicle not found.");
-                        }
-                    }
-                });
     }
 
     public void resetButtons(){
@@ -1030,10 +973,8 @@ public class Car extends AppCompatActivity {
 
                                 String memberID = document.getString("userID");
 
-                                if(memberID == userID)
-                                    continue;
 
-                                //decreasing vehicle count in every record
+                                //decreasing vehicle count in every member record
                                 DocumentReference memberDocument = db.collection("users").document(memberID);
                                 memberDocument.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                     @Override
@@ -1056,7 +997,7 @@ public class Car extends AppCompatActivity {
                                 docRef.delete();
                             }
 
-                            //decreasing vehicle count in every record
+                            //decreasing vehicle count in my record
                             DocumentReference userDocument = db.collection("users").document(userID);
                             userDocument.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                 @Override
@@ -1108,66 +1049,14 @@ public class Car extends AppCompatActivity {
 
     }
 
-    private void deleteMember(String membernick, View view){
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-        progressBarRemoveMember.setProgress(75);
-        db.collection("userVehicles")
-                .whereEqualTo("nickname", membernick)
-                .whereEqualTo("vehicleID", vehicleUID)
-                .get(Source.SERVER)
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if(task.isSuccessful() && !task.getResult().isEmpty()){
-                            QueryDocumentSnapshot document = (QueryDocumentSnapshot) task.getResult().getDocuments().get(0);
-
-                            String memberID = document.getString("userID");
-                            DocumentReference docRef = document.getReference();
-                            docRef.delete();
-                            progressBarRemoveMember.setProgress(100);
-
-                            //decreasing vehicle count in member document
-                            DocumentReference memberDocument = db.collection("users").document(memberID);
-                            memberDocument.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                @Override
-                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                    DocumentSnapshot document1 = task.getResult();
-                                    if(document1.exists()){
-                                        Long vehicleCount = document1.getLong("vehicleCount");
-                                        memberDocument.update("vehicleCount", (vehicleCount - 1));
-                                    }
-                                }
-                            });
-
-                            //decreasing member count in vehicle document
-                            DocumentReference vehicleDoc = db.collection("vehicles").document(vehicleUID);
-                            vehicleDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                @Override
-                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                    DocumentSnapshot document1 = task.getResult();
-                                    if(document1.exists()){
-                                        Long memberCount = document1.getLong("memberCount");
-                                        vehicleDoc.update("memberCount", (memberCount - 1));
-                                    }
-                                }
-                            });
-
-                            Toast.makeText(Car.this, membernick + " has been removed", Toast.LENGTH_SHORT).show();
-                            dialogRemoveMember.dismiss();
-
-                        }
-                        else {
-                            Toast.makeText(Car.this, "No user foud with this nickname", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-
-                    }
-                });
-
-
+        if (requestCode == 1) {
+            if(grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(Car.this, "This app needs location tracking permission", Toast.LENGTH_LONG).show();
+            }
+        }
     }
 }

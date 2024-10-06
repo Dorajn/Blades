@@ -32,6 +32,7 @@ public class Login extends AppCompatActivity {
     String userID;
     FirebaseFirestore db;
     ProgressBar progressBar;
+    DataBaseMenager dbMenager;
 
     @Override
     public void onStart() {
@@ -39,6 +40,7 @@ public class Login extends AppCompatActivity {
         FirebaseUser currentUser = mAuth.getCurrentUser();
 
         if(currentUser != null){
+            //dbMenager.gatherAllInfoAboutUser(Login.this);
             changeIntentWithCarNumCheck();
         }
     }
@@ -55,6 +57,7 @@ public class Login extends AppCompatActivity {
         loginButton =findViewById(R.id.loginButton);
         switchToRegister = findViewById(R.id.switchToRegister);
         progressBar = findViewById(R.id.progressBar);
+        dbMenager = new DataBaseMenager();
 
         switchToRegister.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -93,6 +96,7 @@ public class Login extends AppCompatActivity {
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 progressBar.setVisibility(View.GONE);
                                 if (task.isSuccessful()) {
+                                    dbMenager.getUserID();
                                     Toast.makeText(Login.this, "Login successful.", Toast.LENGTH_SHORT).show();
                                     changeIntentWithCarNumCheck();
 
@@ -117,8 +121,9 @@ public class Login extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 DocumentSnapshot document = task.getResult();
-                if(document.exists()){
+                if(document.exists() && task.isSuccessful()){
                     Long vehicleCount = document.getLong("vehicleCount");
+                    LocalStorage.vehicleCount = vehicleCount;
 
                     if(vehicleCount > 0){
                         Intent intent = new Intent(getApplicationContext(), CarList.class);

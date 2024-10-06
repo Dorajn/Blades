@@ -71,6 +71,43 @@
             android:textStyle="bold"
             />
 
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Meters driven: "
+                android:textSize="20dp"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@id/petrolLevel"
+                android:id="@+id/metersDriven"
+                android:layout_marginTop="30dp"
+                android:textColor="@color/ultra_light_gray"
+
+                />
+
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textSize="20dp"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@id/metersDriven"
+                android:id="@+id/x"
+                android:layout_marginTop="10dp"
+                android:textColor="@color/ultra_light_gray"
+                />
+
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textSize="20dp"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@id/x"
+                android:id="@+id/y"
+                android:layout_marginTop="10dp"
+                android:textColor="@color/ultra_light_gray"
+                />
+
 
         <TextView
             android:layout_width="wrap_content"

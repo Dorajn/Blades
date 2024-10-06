@@ -1,6 +1,7 @@
 package com.app.blades;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -12,6 +13,8 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -26,6 +29,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Register extends AppCompatActivity {
+
+    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
 
     EditText inputEmail, inputNick, inputPassword;
     Button registerButton;
@@ -42,6 +47,7 @@ public class Register extends AppCompatActivity {
 
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if(currentUser != null){
+            //dbMenager.gatherAllInfoAboutUser(Register.this);
             dbMenager.changeIntentDependingOnVehicleCount(Register.this);
         }
     }
@@ -61,7 +67,6 @@ public class Register extends AppCompatActivity {
         registerButton =findViewById(R.id.createAccountButton);
         switchToLogin = findViewById(R.id.switchToLogin);
         progressBar = findViewById(R.id.progressBar);
-
 
         switchToLogin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -109,6 +114,7 @@ public class Register extends AppCompatActivity {
                                 if (task.isSuccessful()) {
                                     Toast.makeText(Register.this, "Account created.", Toast.LENGTH_SHORT).show();
 
+
                                     //inserting data to firebase
                                     Map<String, Object> user = new HashMap<>();
                                     user.put("nick", nick);
@@ -118,6 +124,7 @@ public class Register extends AppCompatActivity {
                                     //user.put("vehicles", new ArrayList<>());
 
                                     userID = mAuth.getCurrentUser().getUid();
+                                    dbMenager.getUserID();
                                     db.collection("users").document(userID).set(user);
 
                                     Intent intent = new Intent(getApplicationContext(), noCarsPage.class);
@@ -131,5 +138,16 @@ public class Register extends AppCompatActivity {
                         });
             }
         });
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
+            if(grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(Register.this, "This app needs location tracking permission", Toast.LENGTH_LONG).show();
+            }
+        }
     }
 }

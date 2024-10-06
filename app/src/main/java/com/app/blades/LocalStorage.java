@@ -6,11 +6,12 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 public class LocalStorage {
 
-    public static long vehicleCount;
-
-    public static double fuelPrice = 5.99;
-
+    //user variables
     public static String userNick;
+    public static long vehicleCount;
+    public static double fuelPrice = 5.99;
+    public static String email;
+
     public static boolean newAddedCar = false;
     public static String currentVehicleUID;
     public static String currentNewVehicleUID;

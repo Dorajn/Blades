@@ -35,7 +35,7 @@ public class CarList extends AppCompatActivity {
     View[] tiles;
     TextView[] vehicleNames;
     ImageView[] warnings;
-
+    DataBaseMenager dbMenager;
 
     FirebaseAuth auth;
     FirebaseFirestore db;
@@ -51,6 +51,8 @@ public class CarList extends AppCompatActivity {
 
         auth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
+        dbMenager = new DataBaseMenager();
+        dbMenager.gatherAllInfoAboutUser(CarList.this);
 
         nick = findViewById(R.id.hiText2);
         addCarButton = findViewById(R.id.addCarButton2);
@@ -150,75 +152,14 @@ public class CarList extends AppCompatActivity {
         super.onStart();
 
         for (int i = 0; i < 5; i++) {
-            tiles[i].setVisibility(View.INVISIBLE);
+            if(i < LocalStorage.vehicleCount)
+                tiles[i].setVisibility(View.VISIBLE);
+            else
+                tiles[i].setVisibility(View.INVISIBLE);
         }
 
         //sets number of tiles visible on screen depending on vehicle counter
-        db.collection("users")
-                .document(userID)
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        DocumentSnapshot document = task.getResult();
-                        if(document.exists()) {
-                            Long vehicleCount = document.getLong("vehicleCount");
-                            vehiclesCount = vehicleCount;
-                            LocalStorage.vehicleCount = vehicleCount;
-
-                            for (int i = 0; i < vehicleCount; i++) {
-                                tiles[i].setVisibility(View.VISIBLE);
-                            }
-
-                            db.collection("userVehicles")
-                                    .whereEqualTo("userID", userID)
-                                    .get(Source.SERVER)
-                                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-
-                                            if(task.isSuccessful()){
-                                                int i = 0;
-                                                for(QueryDocumentSnapshot document : task.getResult()){
-                                                    String vehicleID = (String)document.getData().get("vehicleID");
-                                                    int finalI = i;
-                                                    db.collection("vehicles")
-                                                            .document(vehicleID)
-                                                            .get(Source.CACHE)
-                                                            .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                                                @Override
-                                                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                                                    DocumentSnapshot documentV = task.getResult();
-                                                                    if(documentV.exists()){
-                                                                        String name = (String)documentV.getData().get("vehicleName");
-                                                                        vehicleNames[finalI].setText(name);
-                                                                        LocalStorage.UIDs[finalI] = documentV.getId();
-                                                                        double fuelLevel = Double.parseDouble((String)documentV.getData().get("fuelLevel"));
-
-
-                                                                        if(fuelLevel <= LocalStorage.lowFuelWarning){
-                                                                            warnings[finalI].setVisibility(View.VISIBLE);
-                                                                        }
-                                                                        else{
-                                                                            warnings[finalI].setVisibility(View.INVISIBLE);
-                                                                        }
-                                                                    }
-                                                                }
-                                                            });
-
-                                                    i++;
-                                                }
-                                            }
-                                            else{
-                                                Log.d("Firestore", "error getting data from userVehicle");
-                                            }
-
-                                        }
-                                    });
-                }
-            }
-        });
-
+        dbMenager.setVehiclesIDsToTiles(CarList.this, vehicleNames, warnings);
 
 
         tile1.setOnClickListener(new View.OnClickListener() {
