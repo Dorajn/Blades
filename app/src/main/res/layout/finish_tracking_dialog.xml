@@ -42,7 +42,19 @@
                 android:drawableStart="@drawable/baseline_access_time_24"
                 android:drawablePadding="10dp"
                 style="@style/TEXT_STAT"
-                android:textSize="20dp" />
+                android:textSize="18dp" />
+
+            <TextView
+                    android:id="@+id/gpsEstimatedKm"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:text="Estimated route length: "
+                    android:drawableStart="@drawable/baseline_map_24"
+                    android:drawablePadding="10dp"
+                    android:layout_below="@id/time"
+                    style="@style/TEXT_STAT"
+                    android:textSize="18dp" />
 
             <TextView
                 android:id="@+id/cost"
@@ -52,9 +64,9 @@
                 android:text="Cost: infinity"
                 android:drawableStart="@drawable/baseline_attach_money_24"
                 android:drawablePadding="10dp"
-                android:layout_below="@id/time"
+                android:layout_below="@id/gpsEstimatedKm"
                 style="@style/TEXT_STAT"
-                android:textSize="20dp" />
+                    android:textSize="18dp" />
 
             <TextView
                 android:id="@+id/avgSpeed"
@@ -66,7 +78,7 @@
                 android:drawablePadding="10dp"
                 android:layout_below="@id/cost"
                 style="@style/TEXT_STAT"
-                android:textSize="20dp" />
+                    android:textSize="18dp" />
 
 
             <TextView
@@ -106,7 +118,7 @@
                 android:background="@drawable/custom_input"
                 android:drawableStart="@drawable/baseline_insert_chart_outlined_24"
                 android:drawablePadding="10dp"
-                android:hint="average fuel consumption"
+                android:hint="avg. fuel consumption"
                 android:inputType="text"
                 android:paddingStart="12dp"
                 android:paddingEnd="12dp"

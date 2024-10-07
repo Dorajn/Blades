@@ -54,6 +54,7 @@ public class Car extends AppCompatActivity {
     TextView vehicleMileage;
     TextView vehicleFuelLevel;
     TextView cost;
+    TextView estimatedRoutLength;
     static TextView timeValue;
     TextView avgSpeed;
     ImageView stat;
@@ -238,6 +239,7 @@ public class Car extends AppCompatActivity {
         inactiveButton = dialogTrack.findViewById(R.id.inactiveButton);
         timeValue = dialogTrack.findViewById(R.id.time);
         avgSpeed = dialogTrack.findViewById(R.id.avgSpeed);
+        estimatedRoutLength = dialogTrack.findViewById(R.id.gpsEstimatedKm);
 
         addMemberEditText = dialogAddMember.findViewById(R.id.addMemberEditTextDialog);
         addMemberButton = dialogAddMember.findViewById(R.id.addMemberAcceptButton);
@@ -256,7 +258,7 @@ public class Car extends AppCompatActivity {
         yesDeletion = alertDeletion.findViewById(R.id.yesDeletion);
         noDeletion = alertDeletion.findViewById(R.id.noDeletion);
 
-        locationMenager = new LocationMenager(Car.this, x, y, metersDriven, mileageTrackEditText);
+        locationMenager = new LocationMenager(Car.this, x, y, metersDriven, mileageTrackEditText, estimatedRoutLength);
 
         //firebase variables
         db = FirebaseFirestore.getInstance();

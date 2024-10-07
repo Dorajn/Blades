@@ -41,12 +41,13 @@ public class LocationMenager {
     long mileage;
     public Location location;
     public Location previousLocation;
-    TextView x, y, meters;
+    TextView x, y, meters, estimatedLength;
     EditText editText;
     double metersDriven = 0.0;
 
-    public LocationMenager(Context context, TextView x, TextView y, TextView meters, EditText editText){
+    public LocationMenager(Context context, TextView x, TextView y, TextView meters, EditText editText, TextView estimatedLenght){
 
+        this.estimatedLength = estimatedLenght;
         this.editText = editText;
         this.meters = meters;
         this.x = x;
@@ -94,6 +95,8 @@ public class LocationMenager {
         x.setText("Not tracking");
         y.setText("Not tracking");
         editText.setText(convertMetersToMileage());
+        estimatedLength.setText("Estimated route length: " + getEstimatedRouteLength());
+
     }
 
     private void updateUI(){
@@ -121,6 +124,10 @@ public class LocationMenager {
     private String convertMetersToMileage(){
         long kiloMetersDriven = (long) Math.ceil(metersDriven / 1000);
         return String.valueOf(kiloMetersDriven + mileage);
+    }
+
+    private String getEstimatedRouteLength(){
+        return String.valueOf((long) Math.ceil(metersDriven / 1000));
     }
 
 
