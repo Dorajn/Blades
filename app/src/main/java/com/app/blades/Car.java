@@ -71,8 +71,8 @@ public class Car extends AppCompatActivity {
     String vehicleUID;
 
     //vehicle stored values
-    String mileageStored = "0";
-    String fuelLevelStored = "0";
+    static String mileageStored = "0";
+    static String fuelLevelStored = "0";
 
     //alert variables
     Button yes, no;
@@ -127,10 +127,8 @@ public class Car extends AppCompatActivity {
         metersDriven = findViewById(R.id.metersDriven);
         x = findViewById(R.id.x);
         y = findViewById(R.id.y);
-        x.setText("Not tracking");
-        y.setText("Not tracking");
-
-        locationMenager = new LocationMenager(Car.this, x, y, metersDriven);
+        x.setText("Tracking...");
+        y.setText("Tracking...");
 
         timer = new Timer();
         intentTimer = new Intent(Car.this, TimerService.class);
@@ -257,6 +255,8 @@ public class Car extends AppCompatActivity {
 
         yesDeletion = alertDeletion.findViewById(R.id.yesDeletion);
         noDeletion = alertDeletion.findViewById(R.id.noDeletion);
+
+        locationMenager = new LocationMenager(Car.this, x, y, metersDriven, mileageTrackEditText);
 
         //firebase variables
         db = FirebaseFirestore.getInstance();
@@ -720,6 +720,7 @@ public class Car extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 changeVisualsToTrack();
+                locationMenager.setMileage(Long.parseLong(mileageStored));
                 locationMenager.startLocationUpdates();
                 startTimer();
             }
@@ -1058,6 +1059,11 @@ public class Car extends AppCompatActivity {
         settings.setVisibility(View.INVISIBLE);
         stat.setVisibility(View.INVISIBLE);
         timerView.setVisibility(View.VISIBLE);
+        metersDriven.setVisibility(View.VISIBLE);
+        x.setVisibility(View.VISIBLE);
+        y.setVisibility(View.VISIBLE);
+        x.setText("Tracking...");
+        y.setText("Tracking...");
 
         trackRide.setVisibility(View.INVISIBLE);
         endTracking.setVisibility(View.VISIBLE);
@@ -1072,6 +1078,9 @@ public class Car extends AppCompatActivity {
         settings.setVisibility(View.VISIBLE);
         stat.setVisibility(View.VISIBLE);
         timerView.setVisibility(View.INVISIBLE);
+        metersDriven.setVisibility(View.INVISIBLE);
+        x.setVisibility(View.INVISIBLE);
+        y.setVisibility(View.INVISIBLE);
 
         endTracking.setVisibility(View.INVISIBLE);
         trackRide.setVisibility(View.VISIBLE);

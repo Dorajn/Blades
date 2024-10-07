@@ -306,6 +306,10 @@ public class DataBaseMenager {
                 String fLevel2digits = String.format("%.2f", fLevel);
                 fuelLevel.setText("Fuel: " + fLevel2digits);
 
+                Car.mileageStored =  map.get("mileage").toString();
+                Car.fuelLevelStored = map.get("fuelLevel").toString();
+
+
                 if(fLevel <= LocalStorage.lowFuelWarning)
                     warning.setImageResource(R.drawable.baseline_local_gas_station_24_red);
                 else

@@ -1,8 +1,11 @@
 package com.app.blades;
 
+import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
+
 import android.app.Service;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 import android.widget.TextView;
@@ -16,6 +19,8 @@ import java.util.concurrent.TimeUnit;
 
 public class TimerService extends Service {
 
+    public static final String TIMER_UPDATED = "timerUpdated";
+    public static final String TIMER_VALUE = "timerValue";
     ScheduledExecutorService myschedule_executor;
     TextView timerView;
     int seconds = 0;
@@ -29,9 +34,19 @@ public class TimerService extends Service {
             @Override
             public void run() {
                 seconds++;
-                Car.timerView.setTextColor(Color.parseColor("#bc422d"));
-                Car.timerView.setText(getTimerText());
-                Car.time = seconds;
+
+                Handler mainHandler = new Handler(getMainLooper());
+                mainHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (Car.timerView != null) {
+                            Car.timerView.setTextColor(Color.parseColor("#bc422d"));
+                            Car.timerView.setText(getTimerText());
+                            Car.time = seconds;
+                        }
+                    }
+                });
+
             }
         }, 1, 1, TimeUnit.SECONDS);
 

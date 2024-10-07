@@ -1,12 +1,15 @@
 package com.app.blades;
 
 import static androidx.core.app.ActivityCompat.requestPermissions;
+import android.os.HandlerThread;
+import android.os.Looper;
 
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.util.Log;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,13 +38,16 @@ public class LocationMenager {
     LocationCallback locationCallBack;
 
     //my variables
+    long mileage;
     public Location location;
     public Location previousLocation;
     TextView x, y, meters;
+    EditText editText;
     double metersDriven = 0.0;
 
-    public LocationMenager(Context context, TextView x, TextView y, TextView meters){
+    public LocationMenager(Context context, TextView x, TextView y, TextView meters, EditText editText){
 
+        this.editText = editText;
         this.meters = meters;
         this.x = x;
         this.y = y;
@@ -59,6 +65,7 @@ public class LocationMenager {
             public void onLocationResult(LocationResult locationResult) {
                 super.onLocationResult(locationResult);
                 location = locationResult.getLastLocation();
+
                 calculateMetersDriven();
                 previousLocation = location;
                 updateUI();
@@ -78,6 +85,7 @@ public class LocationMenager {
             // for ActivityCompat#requestPermissions for more details.
             return;
         }
+
         fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallBack, null);
     }
 
@@ -85,22 +93,34 @@ public class LocationMenager {
         fusedLocationProviderClient.removeLocationUpdates(locationCallBack);
         x.setText("Not tracking");
         y.setText("Not tracking");
+        editText.setText(convertMetersToMileage());
     }
 
     private void updateUI(){
         x.setText(String.valueOf(location.getLatitude()));
         y.setText(String.valueOf(location.getLongitude()));
-        meters.setText("Meters driven: _" + String.format("%.2f", metersDriven));
-        Log.d("Lokalizacja", String.valueOf(metersDriven));
+        meters.setText("Meters driven: " + String.format("%.2f", metersDriven));
     }
+
+    public void setMileage(long mileage){this.mileage = mileage;}
 
     private void calculateMetersDriven(){
         if(metersDriven != 0){
-            //Log.d("Lokacja", String.valueOf(previousLocation.distanceTo(location)));
-            metersDriven += (double)previousLocation.distanceTo(location);
+            double mDriven = (double)previousLocation.distanceTo(location);
+
+            if(mDriven >= 5){
+                metersDriven += (double)previousLocation.distanceTo(location);
+                previousLocation = location;
+            }
         }else{
             metersDriven = 0.001;
+            previousLocation = location;
         }
+    }
+
+    private String convertMetersToMileage(){
+        long kiloMetersDriven = (long) Math.ceil(metersDriven / 1000);
+        return String.valueOf(kiloMetersDriven + mileage);
     }
 
 
