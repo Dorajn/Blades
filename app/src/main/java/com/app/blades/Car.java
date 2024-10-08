@@ -4,14 +4,12 @@ import static android.content.ContentValues.TAG;
 
 import android.Manifest;
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -23,22 +21,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.Source;
@@ -50,220 +42,112 @@ import java.util.TimerTask;
 
 public class Car extends AppCompatActivity {
 
+    //TextViewCar
     TextView vehicleName;
     TextView vehicleMileage;
     TextView vehicleFuelLevel;
+
+    //TextViewTrackDialog
+    static TextView timeValue;
     TextView cost;
     TextView estimatedRoutLength;
-    static TextView timeValue;
     TextView avgSpeed;
-    ImageView stat;
-    TextView metersDriven, x, y;
+
+    //TextViewTrackingCar
+    TextView metersDriven, x, y, averageSpeedLive;
+
+    //EditText Dialogs
+    EditText fuelLevelEditTextDialog, mileageEditTextDialog, mileageTrackEditText, avgConsumptionEditText;
+    EditText RefuelLevelEditTextDialog, addMemberEditText, removeMemberEditText;
+
+    //ImageViews
+    ImageView fuelChange, mileage, member, settings, stat;
+
+    //Buttons
+    Button changeCar, changeCarInactive, trackRide, endTracking, inactiveButton;
+    Button acceptFuelChange, acceptMileageChange, acceptTrack, dismiss, goBack, optionRefuel;
+    Button acceptFuelChangeRefuel, addMemberButton, optionEnterFuel;
+    Button deleteVehicle, removeMember, acceptRemoval;
+
+    //Buttons alert
+    Button yes, no, yesDeletion, noDeletion;
+
+    //Progress bars
+    ProgressBar progressBarAddMember, progressBarRemoveMember, progressBarDeleteVehicle;
+
+    //Dialogs
+    Dialog alertYesNo;
+    Dialog dialogFuel, dialogMileage, dialogSettings, dialogTrack, dialogRefuelOption, dialogRefuel;
+    Dialog dialogAddMember, dialogRemoveMember, alertDeletion;
+
+    //Managers
+    DataBaseMenager dbManager;
+    LocationMenager locationMenager;
     FirebaseFirestore db;
     FirebaseAuth auth;
-    String userID;
-    Button changeCar, changeCarInactive, trackRide, endTracking, inactiveButton;
-    ImageView fuelChange, mileage, member, settings;
-    EditText fuelLevelEditTextDialog, mileageEditTextDialog, mileageTrackEditText, avgConsumptionEditText, RefuelLevelEditTextDialog, addMemberEditText, removeMemberEditText;
 
-    Dialog dialogFuel, dialogMileage, dialogSettings, dialogTrack, dialogRefuelOption, dialogRefuel, dialogAddMember, dialogRemoveMember, alertDeletion;
-    Button acceptFuelChange, acceptMileageChange, acceptTrack, dismiss, goBack, optionRefuel, optionEnterFuel, acceptFuelChangeRefuel, addMemberButton;
-    Button deleteVehicle, removeMember, acceptRemoval, yesDeletion, noDeletion;
+    //vehicle variables
+    String userID;
     String vehicleUID;
 
     //vehicle stored values
     static String mileageStored = "0";
     static String fuelLevelStored = "0";
 
-    //alert variables
-    Button yes, no;
-    Dialog alertYesNo;
-
-    //timer
+    //timer variables
+    static double time = 0;
+    double timeSaved = 0;
     static TextView timerView;
     Timer timer;
     TimerTask timerTask;
-    static double time = 0;
-    double timeSaved = 0;
     Intent intentTimer;
-    DataBaseMenager dbMenager;
 
-    ProgressBar progressBarAddMember, progressBarRemoveMember, progressBarDeleteVehicle;
-
-    LocationMenager locationMenager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_car);
 
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, 1);
-            //Toast.makeText(MainActivity.this, "permissions denied.", Toast.LENGTH_SHORT).show();
-        }
+        checkIfUserHasProvidedPermission();
+        setVehicleUIDependingOnAddingCarActivity();
 
-        if(LocalStorage.newAddedCar){
-            vehicleUID = LocalStorage.currentNewVehicleUID;
-        }
-        else{
-            vehicleUID = LocalStorage.currentVehicleUID;
-        }
-
-        dbMenager = new DataBaseMenager();
-
-        //initializing layout variables
-        vehicleName = findViewById(R.id.carName);
-        vehicleMileage = findViewById(R.id.mileage);
-        vehicleFuelLevel = findViewById(R.id.petrolLevel);
-        trackRide = findViewById(R.id.trackRideButton);
-        endTracking = findViewById(R.id.endOfTracking);
-        fuelChange = findViewById(R.id.fuelChangeButton);
-        mileage = findViewById(R.id.mileageChangeButton);
-        changeCar = findViewById(R.id.changeCarButton);
-        timerView = findViewById(R.id.timer);
-        changeCarInactive = findViewById(R.id.changeCarButtonInactive);
-        member = findViewById(R.id.addMember);
-        stat = findViewById(R.id.statistics);
-        settings = findViewById(R.id.carSettings);
-        metersDriven = findViewById(R.id.metersDriven);
-        x = findViewById(R.id.x);
-        y = findViewById(R.id.y);
-        x.setText("Tracking...");
-        y.setText("Tracking...");
-
+        dbManager = new DataBaseMenager();
         timer = new Timer();
         intentTimer = new Intent(Car.this, TimerService.class);
-
-        //dialogs
-        dialogMileage = new Dialog(Car.this);
-        dialogMileage.setContentView(R.layout.mileage_change_dialog);
-        dialogMileage.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        dialogMileage.getWindow().setBackgroundDrawable(getDrawable(R.drawable.dialogs_backgroud));
-
-        dialogRefuelOption = new Dialog(Car.this);
-        dialogRefuelOption.setContentView(R.layout.fuel_refil_options_dialog);
-        dialogRefuelOption.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        dialogRefuelOption.getWindow().setBackgroundDrawable(getDrawable(R.drawable.dialogs_backgroud));
-
-        dialogRefuel = new Dialog(Car.this);
-        dialogRefuel.setContentView(R.layout.fuel_refill_add_dialog);
-        dialogRefuel.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        dialogRefuel.getWindow().setBackgroundDrawable(getDrawable(R.drawable.dialogs_backgroud));
-
-        dialogFuel = new Dialog(Car.this);
-        dialogFuel.setContentView(R.layout.fuel_refill_dialog);
-        dialogFuel.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        dialogFuel.getWindow().setBackgroundDrawable(getDrawable(R.drawable.dialogs_backgroud));
-
-        dialogTrack = new Dialog(Car.this);
-        dialogTrack.setContentView(R.layout.finish_tracking_dialog);
-        dialogTrack.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        dialogTrack.getWindow().setBackgroundDrawable(getDrawable(R.drawable.dialogs_backgroud));
-        dialogTrack.setCancelable(false);
-
-        alertYesNo = new Dialog(Car.this);
-        alertYesNo.setContentView(R.layout.alert_dialog);
-        alertYesNo.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        alertYesNo.getWindow().setBackgroundDrawable(getDrawable(R.drawable.dialogs_backgroud));
-
-        dialogAddMember = new Dialog(Car.this);
-        dialogAddMember.setContentView(R.layout.add_member_dialog);
-        dialogAddMember.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        dialogAddMember.getWindow().setBackgroundDrawable(getDrawable(R.drawable.dialogs_backgroud));
-
-        dialogSettings = new Dialog(Car.this);
-        dialogSettings.setContentView(R.layout.car_settings_dialog);
-        dialogSettings.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        dialogSettings.getWindow().setBackgroundDrawable(getDrawable(R.drawable.dialogs_backgroud));
-
-        dialogRemoveMember = new Dialog(Car.this);
-        dialogRemoveMember.setContentView(R.layout.remove_member_dialog);
-        dialogRemoveMember.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        dialogRemoveMember.getWindow().setBackgroundDrawable(getDrawable(R.drawable.dialogs_backgroud));
-
-        alertDeletion = new Dialog(Car.this);
-        alertDeletion.setContentView(R.layout.alert_dialog_deletion);
-        alertDeletion.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        alertDeletion.getWindow().setBackgroundDrawable(getDrawable(R.drawable.dialogs_backgroud));
-
-
-        Window window = alertYesNo.getWindow();
-        if (window != null) {
-            window.setDimAmount(0.8f);
-        }
-
-        Window window6 = alertDeletion.getWindow();
-        if (window6 != null) {
-            window6.setDimAmount(0.8f);
-        }
-
-        Window window5 = dialogRemoveMember.getWindow();
-        if (window5 != null) {
-            window5.setDimAmount(0.8f);
-        }
-
-        Window window4 = dialogSettings.getWindow();
-        if (window4 != null) {
-            window4.setDimAmount(0.8f);
-        }
-
-        Window window2 = dialogTrack.getWindow();
-        if (window2 != null) {
-            window2.setDimAmount(0.8f);
-        }
-
-        Window window3 = dialogAddMember.getWindow();
-        if (window3 != null) {
-            window3.setDimAmount(0.8f);
-        }
-
-        fuelLevelEditTextDialog = dialogFuel.findViewById(R.id.fuelLevelEditTextDialog);
-        acceptFuelChange = dialogFuel.findViewById(R.id.fuelAcceptButton);
-
-        RefuelLevelEditTextDialog = dialogRefuel.findViewById(R.id.fuelLevelEditTextDialogRefuel);
-        acceptFuelChangeRefuel = dialogRefuel.findViewById(R.id.fuelAcceptButtonRefuel);
-
-        optionEnterFuel = dialogRefuelOption.findViewById(R.id.changeValueFuelButton);
-        optionRefuel = dialogRefuelOption.findViewById(R.id.addFuelButton);
-
-
-        mileageEditTextDialog = dialogMileage.findViewById(R.id.mileageEditTextDialog);
-        acceptMileageChange = dialogMileage.findViewById(R.id.mileageChangeButtonDialog);
-
-        avgConsumptionEditText = dialogTrack.findViewById(R.id.avgConsumptionEditTextDialog);
-        mileageTrackEditText = dialogTrack.findViewById(R.id.mileageOnFinishEditTextDialog);
-        acceptTrack = dialogTrack.findViewById(R.id.trackAcceptButton);
-        dismiss = dialogTrack.findViewById(R.id.dismiss);
-        cost = dialogTrack.findViewById(R.id.cost);
-        goBack = dialogTrack.findViewById(R.id.trackGoBackButton);
-        inactiveButton = dialogTrack.findViewById(R.id.inactiveButton);
-        timeValue = dialogTrack.findViewById(R.id.time);
-        avgSpeed = dialogTrack.findViewById(R.id.avgSpeed);
-        estimatedRoutLength = dialogTrack.findViewById(R.id.gpsEstimatedKm);
-
-        addMemberEditText = dialogAddMember.findViewById(R.id.addMemberEditTextDialog);
-        addMemberButton = dialogAddMember.findViewById(R.id.addMemberAcceptButton);
-        progressBarAddMember = dialogAddMember.findViewById(R.id.progressBarAddMember);
-
-        deleteVehicle = dialogSettings.findViewById(R.id.deleteVehicle);
-        removeMember = dialogSettings.findViewById(R.id.removeMember);
-
-        acceptRemoval = dialogRemoveMember.findViewById(R.id.acceptRemoval);
-        removeMemberEditText = dialogRemoveMember.findViewById(R.id.removeMemberEditText);
-        progressBarRemoveMember = dialogRemoveMember.findViewById(R.id.progressBarRemoveMember);
-
-        yes = alertYesNo.findViewById(R.id.yes);
-        no = alertYesNo.findViewById(R.id.no);
-
-        yesDeletion = alertDeletion.findViewById(R.id.yesDeletion);
-        noDeletion = alertDeletion.findViewById(R.id.noDeletion);
-
-        locationMenager = new LocationMenager(Car.this, x, y, metersDriven, mileageTrackEditText, estimatedRoutLength);
 
         //firebase variables
         db = FirebaseFirestore.getInstance();
         auth = FirebaseAuth.getInstance();
         userID = auth.getCurrentUser().getUid();
+
+        //dialogs
+        setUpMileageDialog();
+        setUpRefuelOptionDialog();
+        setUpRefuelDialog();
+        setUpFuelDialog();
+        setUpTrackDialog();
+        setUpAlertYesNoDialog();
+        setUpAddMemberDialog();
+        setUpSettingsDialog();
+        setUpRemoveMemberDialog();
+        setUpAlertDeletionDialog();
+
+        //initializing
+        initializeVariables();
+        initializeFuelChangeVariables();
+        initializeRefuelChangeVariables();
+        initializeOptionForFuelChangeVariables();
+        initializeMileageChangeVariables();
+        initializeTrackVariables();
+        initializeAddMemberVariables();
+        initializeSettingsVariable();
+        initializeRemoveMemberDialog();
+        initializeAlertYesNoVariables();
+        initializeAlertDeletionVariables();
+
+        locationMenager = new LocationMenager(Car.this, x, y, metersDriven, mileageTrackEditText, estimatedRoutLength, averageSpeedLive);
+
+        changeOpacityInDialogs();
 
         yesDeletion.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -285,7 +169,7 @@ public class Car extends AppCompatActivity {
         removeMember.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                dbMenager.decideWhetherUserCanDeleteMembers(Car.this, vehicleUID, dialogSettings, dialogRemoveMember);
+                dbManager.decideWhetherUserCanDeleteMembers(Car.this, vehicleUID, dialogSettings, dialogRemoveMember);
             }
         });
 
@@ -297,7 +181,7 @@ public class Car extends AppCompatActivity {
                     Toast.makeText(Car.this, "You can't remove yourself", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                dbMenager.deleteMember(Car.this, nickname, vehicleUID, dialogRemoveMember);
+                dbManager.deleteMember(Car.this, nickname, vehicleUID, dialogRemoveMember);
             }
         });
 
@@ -739,6 +623,209 @@ public class Car extends AppCompatActivity {
             }
         });
 
+    } //end of OnCreate method
+
+    private void initializeVariables() {
+        vehicleName = findViewById(R.id.carName);
+        vehicleMileage = findViewById(R.id.mileage);
+        vehicleFuelLevel = findViewById(R.id.petrolLevel);
+        trackRide = findViewById(R.id.trackRideButton);
+        endTracking = findViewById(R.id.endOfTracking);
+        fuelChange = findViewById(R.id.fuelChangeButton);
+        mileage = findViewById(R.id.mileageChangeButton);
+        changeCar = findViewById(R.id.changeCarButton);
+        timerView = findViewById(R.id.timer);
+        changeCarInactive = findViewById(R.id.changeCarButtonInactive);
+        member = findViewById(R.id.addMember);
+        stat = findViewById(R.id.statistics);
+        settings = findViewById(R.id.carSettings);
+        metersDriven = findViewById(R.id.metersDriven);
+        x = findViewById(R.id.x);
+        y = findViewById(R.id.y);
+        averageSpeedLive = findViewById(R.id.averageSpeedLive);
+
+        //set vehicle name from local cache
+        vehicleName.setText(LocalStorage.currentVehicleName);
+    }
+
+    private void initializeAlertDeletionVariables() {
+        yesDeletion = alertDeletion.findViewById(R.id.yesDeletion);
+        noDeletion = alertDeletion.findViewById(R.id.noDeletion);
+    }
+
+    private void initializeAlertYesNoVariables() {
+        yes = alertYesNo.findViewById(R.id.yes);
+        no = alertYesNo.findViewById(R.id.no);
+    }
+
+    private void initializeRemoveMemberDialog() {
+        acceptRemoval = dialogRemoveMember.findViewById(R.id.acceptRemoval);
+        removeMemberEditText = dialogRemoveMember.findViewById(R.id.removeMemberEditText);
+        progressBarRemoveMember = dialogRemoveMember.findViewById(R.id.progressBarRemoveMember);
+    }
+
+    private void initializeSettingsVariable() {
+        deleteVehicle = dialogSettings.findViewById(R.id.deleteVehicle);
+        removeMember = dialogSettings.findViewById(R.id.removeMember);
+    }
+
+    private void initializeAddMemberVariables() {
+        addMemberEditText = dialogAddMember.findViewById(R.id.addMemberEditTextDialog);
+        addMemberButton = dialogAddMember.findViewById(R.id.addMemberAcceptButton);
+        progressBarAddMember = dialogAddMember.findViewById(R.id.progressBarAddMember);
+    }
+
+    private void initializeTrackVariables() {
+        avgConsumptionEditText = dialogTrack.findViewById(R.id.avgConsumptionEditTextDialog);
+        mileageTrackEditText = dialogTrack.findViewById(R.id.mileageOnFinishEditTextDialog);
+        acceptTrack = dialogTrack.findViewById(R.id.trackAcceptButton);
+        dismiss = dialogTrack.findViewById(R.id.dismiss);
+        cost = dialogTrack.findViewById(R.id.cost);
+        goBack = dialogTrack.findViewById(R.id.trackGoBackButton);
+        inactiveButton = dialogTrack.findViewById(R.id.inactiveButton);
+        timeValue = dialogTrack.findViewById(R.id.time);
+        avgSpeed = dialogTrack.findViewById(R.id.avgSpeed);
+        estimatedRoutLength = dialogTrack.findViewById(R.id.gpsEstimatedKm);
+    }
+
+    private void initializeMileageChangeVariables() {
+        mileageEditTextDialog = dialogMileage.findViewById(R.id.mileageEditTextDialog);
+        acceptMileageChange = dialogMileage.findViewById(R.id.mileageChangeButtonDialog);
+    }
+
+    private void initializeOptionForFuelChangeVariables() {
+        optionEnterFuel = dialogRefuelOption.findViewById(R.id.changeValueFuelButton);
+        optionRefuel = dialogRefuelOption.findViewById(R.id.addFuelButton);
+    }
+
+    private void initializeRefuelChangeVariables() {
+        RefuelLevelEditTextDialog = dialogRefuel.findViewById(R.id.fuelLevelEditTextDialogRefuel);
+        acceptFuelChangeRefuel = dialogRefuel.findViewById(R.id.fuelAcceptButtonRefuel);
+    }
+
+    private void initializeFuelChangeVariables() {
+        fuelLevelEditTextDialog = dialogFuel.findViewById(R.id.fuelLevelEditTextDialog);
+        acceptFuelChange = dialogFuel.findViewById(R.id.fuelAcceptButton);
+    }
+
+
+    private void setVehicleUIDependingOnAddingCarActivity() {
+        if(LocalStorage.newAddedCar){
+            vehicleUID = LocalStorage.currentNewVehicleUID;
+        }
+        else{
+            vehicleUID = LocalStorage.currentVehicleUID;
+        }
+
+    }
+
+    private void checkIfUserHasProvidedPermission() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+        }
+    }
+
+    private void changeOpacityInDialogs() {
+        Window window = alertYesNo.getWindow();
+        if (window != null) {
+            window.setDimAmount(0.8f);
+        }
+
+        Window window6 = alertDeletion.getWindow();
+        if (window6 != null) {
+            window6.setDimAmount(0.8f);
+        }
+
+        Window window5 = dialogRemoveMember.getWindow();
+        if (window5 != null) {
+            window5.setDimAmount(0.8f);
+        }
+
+        Window window4 = dialogSettings.getWindow();
+        if (window4 != null) {
+            window4.setDimAmount(0.8f);
+        }
+
+        Window window2 = dialogTrack.getWindow();
+        if (window2 != null) {
+            window2.setDimAmount(0.8f);
+        }
+
+        Window window3 = dialogAddMember.getWindow();
+        if (window3 != null) {
+            window3.setDimAmount(0.8f);
+        }
+    }
+
+    private void setUpAlertDeletionDialog() {
+        alertDeletion = new Dialog(Car.this);
+        alertDeletion.setContentView(R.layout.alert_dialog_deletion);
+        alertDeletion.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        alertDeletion.getWindow().setBackgroundDrawable(getDrawable(R.drawable.dialogs_backgroud));
+    }
+
+    private void setUpRemoveMemberDialog() {
+        dialogRemoveMember = new Dialog(Car.this);
+        dialogRemoveMember.setContentView(R.layout.remove_member_dialog);
+        dialogRemoveMember.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialogRemoveMember.getWindow().setBackgroundDrawable(getDrawable(R.drawable.dialogs_backgroud));
+    }
+
+    private void setUpSettingsDialog() {
+        dialogSettings = new Dialog(Car.this);
+        dialogSettings.setContentView(R.layout.car_settings_dialog);
+        dialogSettings.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialogSettings.getWindow().setBackgroundDrawable(getDrawable(R.drawable.dialogs_backgroud));
+    }
+
+    private void setUpAddMemberDialog() {
+        dialogAddMember = new Dialog(Car.this);
+        dialogAddMember.setContentView(R.layout.add_member_dialog);
+        dialogAddMember.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialogAddMember.getWindow().setBackgroundDrawable(getDrawable(R.drawable.dialogs_backgroud));
+    }
+
+    private void setUpAlertYesNoDialog() {
+        alertYesNo = new Dialog(Car.this);
+        alertYesNo.setContentView(R.layout.alert_dialog);
+        alertYesNo.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        alertYesNo.getWindow().setBackgroundDrawable(getDrawable(R.drawable.dialogs_backgroud));
+    }
+
+    private void setUpTrackDialog() {
+        dialogTrack = new Dialog(Car.this);
+        dialogTrack.setContentView(R.layout.finish_tracking_dialog);
+        dialogTrack.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialogTrack.getWindow().setBackgroundDrawable(getDrawable(R.drawable.dialogs_backgroud));
+        dialogTrack.setCancelable(false);
+    }
+
+    private void setUpFuelDialog() {
+        dialogFuel = new Dialog(Car.this);
+        dialogFuel.setContentView(R.layout.fuel_refill_dialog);
+        dialogFuel.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialogFuel.getWindow().setBackgroundDrawable(getDrawable(R.drawable.dialogs_backgroud));
+    }
+
+    private void setUpRefuelDialog() {
+        dialogRefuel = new Dialog(Car.this);
+        dialogRefuel.setContentView(R.layout.fuel_refill_add_dialog);
+        dialogRefuel.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialogRefuel.getWindow().setBackgroundDrawable(getDrawable(R.drawable.dialogs_backgroud));
+    }
+
+    private void setUpRefuelOptionDialog() {
+        dialogRefuelOption = new Dialog(Car.this);
+        dialogRefuelOption.setContentView(R.layout.fuel_refil_options_dialog);
+        dialogRefuelOption.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialogRefuelOption.getWindow().setBackgroundDrawable(getDrawable(R.drawable.dialogs_backgroud));
+    }
+
+    private void setUpMileageDialog() {
+        dialogMileage = new Dialog(Car.this);
+        dialogMileage.setContentView(R.layout.mileage_change_dialog);
+        dialogMileage.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialogMileage.getWindow().setBackgroundDrawable(getDrawable(R.drawable.dialogs_backgroud));
     }
 
 
@@ -757,7 +844,7 @@ public class Car extends AppCompatActivity {
         resetMileageChangeDialog();
 
         vehicleUID = LocalStorage.newAddedCar ? LocalStorage.currentNewVehicleUID : LocalStorage.currentVehicleUID;
-        dbMenager.gatherCarData(Car.this, vehicleUID, vehicleFuelLevel, vehicleMileage, vehicleName, fuelChange);
+        dbManager.gatherCarData(Car.this, vehicleUID, vehicleFuelLevel, vehicleMileage, vehicleName, fuelChange);
 
     }
 
@@ -954,6 +1041,9 @@ public class Car extends AppCompatActivity {
 
     private void deleteThisVehicle(View view){
 
+        //clear the names table
+        LocalStorage.vehicleNames.clear();
+
         //deleting all userVehicles documents
         db.collection("userVehicles")
                 .whereEqualTo("vehicleID", vehicleUID)
@@ -1037,10 +1127,6 @@ public class Car extends AppCompatActivity {
                         }
                     }
                 });
-
-
-
-
     }
 
     @Override
@@ -1064,6 +1150,7 @@ public class Car extends AppCompatActivity {
         metersDriven.setVisibility(View.VISIBLE);
         x.setVisibility(View.VISIBLE);
         y.setVisibility(View.VISIBLE);
+        averageSpeedLive.setVisibility(View.VISIBLE);
         x.setText("Tracking...");
         y.setText("Tracking...");
 
@@ -1083,6 +1170,7 @@ public class Car extends AppCompatActivity {
         metersDriven.setVisibility(View.INVISIBLE);
         x.setVisibility(View.INVISIBLE);
         y.setVisibility(View.INVISIBLE);
+        averageSpeedLive.setVisibility(View.INVISIBLE);
 
         endTracking.setVisibility(View.INVISIBLE);
         trackRide.setVisibility(View.VISIBLE);

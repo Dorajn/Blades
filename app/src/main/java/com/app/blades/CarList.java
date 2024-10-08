@@ -57,44 +57,7 @@ public class CarList extends AppCompatActivity {
         nick = findViewById(R.id.hiText2);
         addCarButton = findViewById(R.id.addCarButton2);
         logoutButton = findViewById(R.id.logoutButton2);
-        tile1 = findViewById(R.id.tile1);
-        tile2 = findViewById(R.id.tile2);
-        tile3 = findViewById(R.id.tile3);
-        tile4 = findViewById(R.id.tile4);
-        tile5 = findViewById(R.id.tile5);
-
-        car1 = findViewById(R.id.vehicle1);
-        car2 = findViewById(R.id.vehicle2);
-        car3 = findViewById(R.id.vehicle3);
-        car4 = findViewById(R.id.vehicle4);
-        car5 = findViewById(R.id.vehicle5);
-
-        war1 = findViewById(R.id.warning1);
-        war2 = findViewById(R.id.warning2);
-        war3 = findViewById(R.id.warning3);
-        war4 = findViewById(R.id.warning4);
-        war5 = findViewById(R.id.warning5);
-
-        tiles = new View[5];
-        tiles[0] = tile1;
-        tiles[1] = tile2;
-        tiles[2] = tile3;
-        tiles[3] = tile4;
-        tiles[4] = tile5;
-
-        vehicleNames = new TextView[5];
-        vehicleNames[0] = car1;
-        vehicleNames[1] = car2;
-        vehicleNames[2] = car3;
-        vehicleNames[3] = car4;
-        vehicleNames[4] = car5;
-
-        warnings = new ImageView[5];
-        warnings[0] = war1;
-        warnings[1] = war2;
-        warnings[2] = war3;
-        warnings[3] = war4;
-        warnings[4] = war5;
+        initializeTilesVariables();
 
         settings = findViewById(R.id.settings);
 
@@ -147,16 +110,52 @@ public class CarList extends AppCompatActivity {
 
     }
 
+    private void initializeTilesVariables() {
+        tile1 = findViewById(R.id.tile1);
+        tile2 = findViewById(R.id.tile2);
+        tile3 = findViewById(R.id.tile3);
+        tile4 = findViewById(R.id.tile4);
+        tile5 = findViewById(R.id.tile5);
+
+        car1 = findViewById(R.id.vehicle1);
+        car2 = findViewById(R.id.vehicle2);
+        car3 = findViewById(R.id.vehicle3);
+        car4 = findViewById(R.id.vehicle4);
+        car5 = findViewById(R.id.vehicle5);
+
+        war1 = findViewById(R.id.warning1);
+        war2 = findViewById(R.id.warning2);
+        war3 = findViewById(R.id.warning3);
+        war4 = findViewById(R.id.warning4);
+        war5 = findViewById(R.id.warning5);
+
+        tiles = new View[5];
+        tiles[0] = tile1;
+        tiles[1] = tile2;
+        tiles[2] = tile3;
+        tiles[3] = tile4;
+        tiles[4] = tile5;
+
+        vehicleNames = new TextView[5];
+        vehicleNames[0] = car1;
+        vehicleNames[1] = car2;
+        vehicleNames[2] = car3;
+        vehicleNames[3] = car4;
+        vehicleNames[4] = car5;
+
+        warnings = new ImageView[5];
+        warnings[0] = war1;
+        warnings[1] = war2;
+        warnings[2] = war3;
+        warnings[3] = war4;
+        warnings[4] = war5;
+    }
+
     @Override
     protected void onStart() {
         super.onStart();
 
-        for (int i = 0; i < 5; i++) {
-            if(i < LocalStorage.vehicleCount)
-                tiles[i].setVisibility(View.VISIBLE);
-            else
-                tiles[i].setVisibility(View.INVISIBLE);
-        }
+        setSomeTilesVisibleDependingOnVehicleCount();
 
         //sets number of tiles visible on screen depending on vehicle counter
         dbMenager.setVehiclesIDsToTiles(CarList.this, vehicleNames, warnings);
@@ -169,6 +168,7 @@ public class CarList extends AppCompatActivity {
                 LocalStorage.newAddedCar = false;
                 if(LocalStorage.vehicleCount > 0){
                     LocalStorage.currentVehicleUID = LocalStorage.UIDs[0];
+                    LocalStorage.currentVehicleName = LocalStorage.vehicleNames.get(0);
                 }
 
                 Intent intent = new Intent(getApplicationContext(), Car.class);
@@ -183,6 +183,7 @@ public class CarList extends AppCompatActivity {
                 LocalStorage.newAddedCar = false;
                 if(LocalStorage.vehicleCount > 1){
                     LocalStorage.currentVehicleUID = LocalStorage.UIDs[1];
+                    LocalStorage.currentVehicleName = LocalStorage.vehicleNames.get(1);
                 }
                 Intent intent = new Intent(getApplicationContext(), Car.class);
                 startActivity(intent);
@@ -196,6 +197,7 @@ public class CarList extends AppCompatActivity {
                 LocalStorage.newAddedCar = false;
                 if(LocalStorage.vehicleCount > 2){
                     LocalStorage.currentVehicleUID = LocalStorage.UIDs[2];
+                    LocalStorage.currentVehicleName = LocalStorage.vehicleNames.get(2);
                 }
                 Intent intent = new Intent(getApplicationContext(), Car.class);
                 startActivity(intent);
@@ -209,6 +211,7 @@ public class CarList extends AppCompatActivity {
                 LocalStorage.newAddedCar = false;
                 if(LocalStorage.vehicleCount > 3){
                     LocalStorage.currentVehicleUID = LocalStorage.UIDs[3];
+                    LocalStorage.currentVehicleName = LocalStorage.vehicleNames.get(3);
                 }
                 Intent intent = new Intent(getApplicationContext(), Car.class);
                 startActivity(intent);
@@ -222,6 +225,7 @@ public class CarList extends AppCompatActivity {
                 LocalStorage.newAddedCar = false;
                 if(LocalStorage.vehicleCount > 4){
                     LocalStorage.currentVehicleUID = LocalStorage.UIDs[4];
+                    LocalStorage.currentVehicleName = LocalStorage.vehicleNames.get(4);
                 }
                 Intent intent = new Intent(getApplicationContext(), Car.class);
                 startActivity(intent);
@@ -232,6 +236,14 @@ public class CarList extends AppCompatActivity {
 
     }
 
+    private void setSomeTilesVisibleDependingOnVehicleCount() {
+        for (int i = 0; i < 5; i++) {
+            if(i < LocalStorage.vehicleCount)
+                tiles[i].setVisibility(View.VISIBLE);
+            else
+                tiles[i].setVisibility(View.INVISIBLE);
+        }
+    }
 
 
 }

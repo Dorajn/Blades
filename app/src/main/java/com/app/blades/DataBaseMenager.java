@@ -67,6 +67,7 @@ public class DataBaseMenager {
         Toast.makeText(context, text, Toast.LENGTH_LONG).show();
     }
 
+
     //method to gather all variables from data base
     public void gatherAllInfoAboutUser(Context context){
 
@@ -161,6 +162,9 @@ public class DataBaseMenager {
                 LocalStorage.vehicleCount += 1;
                 LocalStorage.newAddedCar = true;
 
+                //clear the names table
+                LocalStorage.vehicleNames.clear();
+
                 Intent intent = new Intent(context, Car.class);
                 context.startActivity(intent);
                 ((Activity) context).finish();
@@ -210,6 +214,8 @@ public class DataBaseMenager {
     //CarList activity
     public void setVehiclesIDsToTiles(Context context, TextView[] vehicleNames, ImageView[] warnings){
 
+        setVehicleNamesFromCache(vehicleNames);
+
         CollectionReference vehicleCollRef = db.collection("vehicles");
 
         db.collection("userVehicles")
@@ -249,8 +255,16 @@ public class DataBaseMenager {
                             @Override
                             public void onSuccess(List<Map<String, Object>> maps) {
                                 int i = 0;
+
+                                boolean addVehicleNameToTheList = LocalStorage.vehicleNames.isEmpty() ? true : false;
+
                                 for(Map<String, Object> map : maps){
-                                    vehicleNames[i].setText(map.get("vehicleName").toString());
+                                    String vehicleName = map.get("vehicleName").toString();
+                                    vehicleNames[i].setText(vehicleName);
+
+                                    if(addVehicleNameToTheList)
+                                        LocalStorage.vehicleNames.add(vehicleName);
+
                                     LocalStorage.UIDs[i] = map.get("vehicleID").toString();
 
                                     double fuelLevel = Double.parseDouble(map.get("fuelLevel").toString());
@@ -273,6 +287,16 @@ public class DataBaseMenager {
                     }
                 });
 
+    }
+
+    private static void setVehicleNamesFromCache(TextView[] vehicleNames) {
+        if(!LocalStorage.vehicleNames.isEmpty()){
+            int i = 0;
+            for(String name : LocalStorage.vehicleNames){
+                vehicleNames[i].setText(name);
+                i++;
+            }
+        }
     }
 
 

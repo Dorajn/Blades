@@ -4,6 +4,9 @@ package com.app.blades;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class LocalStorage {
 
     //user variables
@@ -14,8 +17,10 @@ public class LocalStorage {
 
     public static boolean newAddedCar = false;
     public static String currentVehicleUID;
+    public static String currentVehicleName;
     public static String currentNewVehicleUID;
     public static String[] UIDs = new String[5];
+    public static List<String> vehicleNames = new ArrayList<>();
 
     public static final long lowFuelWarning = 3;
     public static final long maxVehicleNameLenght = 20;

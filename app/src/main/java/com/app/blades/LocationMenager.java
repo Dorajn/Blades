@@ -29,6 +29,7 @@ public class LocationMenager {
 
     public static final int TIME_INTERVAL_SENDING_GPS_SIGNAL = 5000;
     public static final int TIME_INTERVAL_GETTING_FAST_SIGNAL = 5000;
+    public static final int ERROR_RANGE = 5;
 
     Context context;
 
@@ -41,13 +42,14 @@ public class LocationMenager {
     long mileage;
     public Location location;
     public Location previousLocation;
-    TextView x, y, meters, estimatedLength;
+    TextView x, y, meters, estimatedLength, averageSpeed;
     EditText editText;
     double metersDriven = 0.0;
 
-    public LocationMenager(Context context, TextView x, TextView y, TextView meters, EditText editText, TextView estimatedLenght){
+    public LocationMenager(Context context, TextView x, TextView y, TextView meters, EditText editText, TextView estimatedLength, TextView averageSpeed){
 
-        this.estimatedLength = estimatedLenght;
+        this.averageSpeed = averageSpeed;
+        this.estimatedLength = estimatedLength;
         this.editText = editText;
         this.meters = meters;
         this.x = x;
@@ -103,6 +105,7 @@ public class LocationMenager {
         x.setText(String.valueOf(location.getLatitude()));
         y.setText(String.valueOf(location.getLongitude()));
         meters.setText("Meters driven: " + String.format("%.2f", metersDriven));
+        averageSpeed.setText("Average speed: " + getAverageSpeed());
     }
 
     public void setMileage(long mileage){this.mileage = mileage;}
@@ -111,7 +114,7 @@ public class LocationMenager {
         if(metersDriven != 0){
             double mDriven = (double)previousLocation.distanceTo(location);
 
-            if(mDriven >= 5){
+            if(mDriven >= ERROR_RANGE){
                 metersDriven += (double)previousLocation.distanceTo(location);
                 previousLocation = location;
             }
@@ -130,5 +133,7 @@ public class LocationMenager {
         return String.valueOf((long) Math.ceil(metersDriven / 1000));
     }
 
-
+    private String getAverageSpeed(){
+        return String.format("%.2f" ,(metersDriven / 1000) / (Car.time / 3600));
+    }
 }
