@@ -91,4 +91,6 @@
         "when a user tries to pick up one of cards.\n\n"
     </string>
     <string name="action_settings">Settings</string>
+    <string name="info_about_extra_lazy_calcs">Use data from other vehicle users to calculate average fuel consumpption. Use only if you think that other users use the same amount of fuel. </string>
+    <string name="info_about_lazy_calcs">Lazy average fuel consumption calculations. App will automaticly learn your car\'s average fuel consumption and suggest you propper number while finishing the track. We suggest to use it without any supervision only after many rides. You still are able to change data on your own. It is only a suggestion.</string>
 </resources>

@@ -26,7 +26,6 @@
         android:id="@+id/fuelPriceInfo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
         android:layout_marginHorizontal="30dp"
         android:layout_marginTop="40dp"
         android:text="Fuel price: "
@@ -34,49 +33,117 @@
         android:textSize="16dp"
         android:layout_below="@id/settingsText"/>
 
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/fuelPriceInfo"
+            android:layout_marginTop="10dp"
+            android:layout_marginHorizontal="30dp"
+            android:orientation="horizontal"
+            android:id="@+id/fuelLinear">
 
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Enter new fuel price"
-        android:layout_below="@+id/fuelPriceInfo"
-        android:layout_marginTop="10dp"
-        android:layout_marginHorizontal="30dp"
-        android:id="@+id/editTextFuelPrice"
-        android:drawableStart="@drawable/baseline_attach_money_24"
-        android:drawablePadding="10dp"
-        android:background="@drawable/custom_input"
-        android:paddingEnd="12dp"
-        android:paddingStart="12dp"
-        android:imeOptions="actionDone"
-        style="@style/EDIT_TEXT"/>
+        <EditText
+                android:layout_width="match_parent"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:hint="Enter new fuel price"
+                android:id="@+id/editTextFuelPrice"
+                android:drawableStart="@drawable/baseline_attach_money_24"
+                android:drawablePadding="10dp"
+                android:background="@drawable/custom_input"
+                android:paddingEnd="12dp"
+                android:paddingStart="12dp"
+                android:imeOptions="actionDone"
+                style="@style/EDIT_TEXT"/>
+
+
+        <ImageView
+                android:id="@+id/applyFuelPrice"
+                android:layout_width="50dp"
+                android:layout_height="match_parent"
+                android:src="@drawable/baseline_check_24"
+                android:layout_marginLeft="10dp"
+                />
+
+    </LinearLayout>
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/fuelLinear"
+            android:layout_marginTop="20dp"
+            android:layout_marginHorizontal="30dp"
+            android:orientation="horizontal"
+            android:gravity="center_horizontal"
+            android:id="@+id/lazyLinear">
+
+        <TextView
+                android:layout_weight="1"
+                android:id="@+id/lazyCalcInfo"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/info_about_lazy_calcs"
+                style="@style/TEXT_STAT"
+                android:textSize="16sp"
+                />
+
+
+        <Switch
+                android:layout_weight="0.01"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:thumbTint="@color/cyan"
+                tools:ignore="UseSwitchCompatOrMaterialXml"
+                android:id="@+id/lazySwitch"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/lazyLinear"
+            android:layout_marginTop="20dp"
+            android:layout_marginHorizontal="30dp"
+            android:orientation="horizontal"
+            android:gravity="center_horizontal"
+            android:id="@+id/lazyExtraLinear">
+
+        <TextView
+                android:layout_weight="1"
+                android:id="@+id/lazyExtraCalcInfo"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/info_about_extra_lazy_calcs"
+                style="@style/TEXT_STAT"
+                android:textSize="16sp"
+                />
+
+
+        <Switch
+                android:layout_weight="0.01"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="false"
+                android:thumbTint="@color/cyan"
+                tools:ignore="UseSwitchCompatOrMaterialXml"
+                android:id="@+id/lazyExtraSwitch"/>
+
+    </LinearLayout>
+
+
+
 
     <androidx.appcompat.widget.AppCompatButton
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_above="@id/applyButton2"
-        android:layout_marginHorizontal="20dp"
+            android:layout_alignParentBottom="true"
+        android:layout_margin="20dp"
         android:text="go back"
         android:background="@drawable/go_back_button"
         android:id="@+id/goBackSettings"
         style="@style/BUTTON_GO_BACK"/>
-
-
-
-    <androidx.appcompat.widget.AppCompatButton
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_alignParentBottom="true"
-        android:layout_margin="20dp"
-        android:text="apply changes"
-        android:background="@drawable/rounded_button"
-        android:id="@+id/applyButton2"
-        style="@style/BUTTON"/>
-
-
-
 
 
 </RelativeLayout>
