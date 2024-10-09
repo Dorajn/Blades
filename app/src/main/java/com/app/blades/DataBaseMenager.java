@@ -6,9 +6,11 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.Image;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -129,6 +131,7 @@ public class DataBaseMenager {
                 DocumentReference vehicleDocRef = db.collection("vehicles").document();
                 transaction.set(vehicleDocRef, vehicle);
 
+                List<Double> list = new ArrayList<>();
 
                 //adding relation between user and vehicle
                 Map<String, Object> usersVehicle = new HashMap<>();
@@ -136,9 +139,9 @@ public class DataBaseMenager {
                 usersVehicle.put("vehicleID", vehicleDocRef.getId());
                 usersVehicle.put("relationType", "owner");
                 usersVehicle.put("nickname", nickname);
-                //usersVehicle.put("vehicleName", vehicleName);
                 usersVehicle.put("usedFuel", 0);
                 usersVehicle.put("deliveredFuel", 0);
+                usersVehicle.put("averageConsumptionList", list);
 
                 DocumentReference usersVehiclesDocRef = db.collection("userVehicles").document();
                 transaction.set(usersVehiclesDocRef, usersVehicle);
@@ -529,6 +532,90 @@ public class DataBaseMenager {
                     @Override
                     public void onFailure(@NonNull Exception e) {
 
+                    }
+                });
+    }
+
+    public void setAverageFuelConsumption(Context context, String vehicleID, EditText editText){
+        SharedPreferences sharedPref = context.getSharedPreferences("userSettings", Context.MODE_PRIVATE);
+        if(sharedPref.getBoolean("lazyExtraFuelCalc", false))
+            getAvgExtraFuelConsumption(context, vehicleID, editText);
+        else if(sharedPref.getBoolean("lazyFuelCalc", true))
+            getAvgFuelConsumption(context, vehicleID, editText);
+
+    }
+
+    private void getAvgFuelConsumption(Context context, String vehicleID, EditText editText) {
+
+        db.collection("userVehicles")
+                .whereEqualTo("userID", userID)
+                .whereEqualTo("vehicleID", vehicleID)
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        DocumentSnapshot document = queryDocumentSnapshots.getDocuments().get(0);
+                        DocumentReference docRef = document.getReference();
+
+                        db.runTransaction(new Transaction.Function<List<Double>>() {
+                            @Nullable
+                            @Override
+                            public List<Double> apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
+
+                                DocumentSnapshot doc = transaction.get(docRef);
+                                List<Double> list = (List<Double>) doc.get("averageConsumptionList");
+                                return list;
+
+                            }
+                        }).addOnSuccessListener(new OnSuccessListener<List<Double>>() {
+                            @Override
+                            public void onSuccess(List<Double> list) {
+
+                                if(list == null || list.isEmpty())
+                                    editText.setText("");
+                                else{
+                                    double sum = 0;
+                                    for (double elem : list){
+                                        sum += elem;
+                                    }
+
+                                    editText.setText(String.format("%.2f", sum / list.size()));
+                                }
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                editText.setText("blad tranzakcji");
+                            }
+                        });
+
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        editText.setText("blad dokumentu");
+                    }
+                });
+    }
+
+    private String getAvgExtraFuelConsumption(Context context, String vehicleID, EditText editText){
+        return "";
+        //not developed yet
+    }
+
+    public void addFuelConsumptionToArray(double avg, String vehicleID){
+        db.collection("userVehicles")
+                .whereEqualTo("userID", userID)
+                .whereEqualTo("vehicleID", vehicleID)
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        DocumentSnapshot document = queryDocumentSnapshots.getDocuments().get(0);
+
+                        List<Double> list = (List<Double>) document.get("averageConsumptionList");
+                        list.add(avg);
+                        document.getReference().update("averageConsumptionList", list);
                     }
                 });
     }

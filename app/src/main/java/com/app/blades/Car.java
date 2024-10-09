@@ -35,6 +35,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.Source;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Timer;
@@ -296,6 +297,7 @@ public class Car extends AppCompatActivity {
                                                                                 userVehicle.put("nickname", nickname);
                                                                                 userVehicle.put("usedFuel", 0);
                                                                                 userVehicle.put("deliveredFuel", 0);
+                                                                                userVehicle.put("averageConsumptionList", new ArrayList<Double>());
                                                                                 db.collection("userVehicles").add(userVehicle);
 
                                                                                 //changing vehicle count
@@ -395,6 +397,8 @@ public class Car extends AppCompatActivity {
 
                 String currentMileageAfter = mileageTrackEditText.getText().toString();
                 String avgFuelCon = avgConsumptionEditText.getText().toString();
+                avgFuelCon = avgFuelCon.replace(',', '.');
+
 
                 if(!checkTrackConstraints(currentMileageAfter, avgFuelCon))
                     return;
@@ -402,6 +406,8 @@ public class Car extends AppCompatActivity {
                 long currMileageAfterTrack = Long.parseLong(currentMileageAfter);
                 double averageFuelCon = Double.parseDouble(avgFuelCon);
                 long startMileage = Long.parseLong(mileageStored);
+
+                dbManager.addFuelConsumptionToArray(averageFuelCon, vehicleUID);
 
                 if(currMileageAfterTrack < startMileage){
                     Toast.makeText(Car.this, "Mileage can not be lower than before ride", Toast.LENGTH_LONG).show();
@@ -616,6 +622,7 @@ public class Car extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 locationMenager.endLocationUpdates();
+                dbManager.setAverageFuelConsumption(Car.this, vehicleUID, avgConsumptionEditText);
                 timeValue.setText("Time: " + getTimerText());
                 dialogTrack.show();
                 changeVisualsToNormal();
@@ -707,7 +714,6 @@ public class Car extends AppCompatActivity {
         fuelLevelEditTextDialog = dialogFuel.findViewById(R.id.fuelLevelEditTextDialog);
         acceptFuelChange = dialogFuel.findViewById(R.id.fuelAcceptButton);
     }
-
 
     private void setVehicleUIDependingOnAddingCarActivity() {
         if(LocalStorage.newAddedCar){
@@ -1001,7 +1007,7 @@ public class Car extends AppCompatActivity {
             Toast.makeText(Car.this, "Mileage must be positive integer", Toast.LENGTH_SHORT).show();
             return false;
         }
-        if (avgFuel == null || !avgFuel.matches("\\d*\\.?\\d+")) {
+        if (avgFuel == null || !avgFuel.matches("\\d*[,.]?\\d+")) {
             Toast.makeText(Car.this, "Fuel consumption must be positive number", Toast.LENGTH_SHORT).show();
             return false;
         }
