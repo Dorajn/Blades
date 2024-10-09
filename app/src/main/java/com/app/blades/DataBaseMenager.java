@@ -38,8 +38,10 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.Source;
 import com.google.firebase.firestore.Transaction;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -612,12 +614,24 @@ public class DataBaseMenager {
                     @Override
                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                         DocumentSnapshot document = queryDocumentSnapshots.getDocuments().get(0);
-
                         List<Double> list = (List<Double>) document.get("averageConsumptionList");
-                        list.add(avg);
+
+                        addNewDataToCyclicArray(list, avg);
                         document.getReference().update("averageConsumptionList", list);
                     }
                 });
+    }
+
+    private void addNewDataToCyclicArray(List<Double> list, double value){
+        if(list.size() == LocalStorage.MAX_DEQUE_SIZE){
+            for(int i = 0; i < LocalStorage.MAX_DEQUE_SIZE - 1; i++){
+                list.set(i, list.get(i + 1));
+            }
+            list.set(LocalStorage.MAX_DEQUE_SIZE - 1, value);
+        }
+        else{
+            list.add(value);
+        }
     }
 
 //    public void addMember(Context context, String nick, String vehicleID){

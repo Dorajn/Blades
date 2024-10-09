@@ -22,6 +22,7 @@ public class LocalStorage {
     public static String[] UIDs = new String[5];
     public static List<String> vehicleNames = new ArrayList<>();
 
+    public static int MAX_DEQUE_SIZE = 100;
     public static final long lowFuelWarning = 3;
     public static final long maxVehicleNameLenght = 20;
 

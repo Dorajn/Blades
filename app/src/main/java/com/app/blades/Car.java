@@ -35,8 +35,11 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.Source;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -291,13 +294,15 @@ public class Car extends AppCompatActivity {
                                                                             else{
                                                                                 //adding record to relation table
                                                                                 Map<String, Object> userVehicle = new HashMap<>();
+                                                                                List<Double> list = new ArrayList<>();
+
                                                                                 userVehicle.put("userID", newMemberID);
                                                                                 userVehicle.put("vehicleID", vehicleUID);
                                                                                 userVehicle.put("relationType", "member");
                                                                                 userVehicle.put("nickname", nickname);
                                                                                 userVehicle.put("usedFuel", 0);
                                                                                 userVehicle.put("deliveredFuel", 0);
-                                                                                userVehicle.put("averageConsumptionList", new ArrayList<Double>());
+                                                                                userVehicle.put("averageConsumptionList", list);
                                                                                 db.collection("userVehicles").add(userVehicle);
 
                                                                                 //changing vehicle count
