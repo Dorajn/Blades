@@ -1,14 +1,10 @@
 package com.app.blades;
 
-import static android.content.ContentValues.TAG;
-
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.media.Image;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -19,29 +15,21 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.Firebase;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.Source;
 import com.google.firebase.firestore.Transaction;
 
-import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Deque;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -273,7 +261,7 @@ public class DataBaseMenager {
                                     LocalStorage.UIDs[i] = map.get("vehicleID").toString();
 
                                     double fuelLevel = Double.parseDouble(map.get("fuelLevel").toString());
-                                    if(fuelLevel <= LocalStorage.lowFuelWarning){
+                                    if(fuelLevel <= LocalStorage.LOW_FUEL_WARNING){
                                         warnings[i].setVisibility(View.VISIBLE);
                                     }
                                     else{
@@ -339,7 +327,7 @@ public class DataBaseMenager {
                 Car.fuelLevelStored = map.get("fuelLevel").toString();
 
 
-                if(fLevel <= LocalStorage.lowFuelWarning)
+                if(fLevel <= LocalStorage.LOW_FUEL_WARNING)
                     warning.setImageResource(R.drawable.baseline_local_gas_station_24_red);
                 else
                     warning.setImageResource(R.drawable.baseline_local_gas_station_24_white);

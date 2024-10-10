@@ -1,7 +1,16 @@
 package com.app.blades;
 
 import static androidx.core.app.ActivityCompat.requestPermissions;
+
+import android.annotation.SuppressLint;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.Service;
+import android.content.Intent;
+import android.os.Build;
 import android.os.HandlerThread;
+import android.os.IBinder;
 import android.os.Looper;
 
 import android.Manifest;
@@ -14,7 +23,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -25,11 +36,12 @@ import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.lang.reflect.Constructor;
 
-public class LocationMenager {
+public class LocationMenager extends Service {
 
     public static final int TIME_INTERVAL_SENDING_GPS_SIGNAL = 5000;
     public static final int TIME_INTERVAL_GETTING_FAST_SIGNAL = 5000;
     public static final int ERROR_RANGE = 5;
+    private static final String CHANNEL_ID = "LocationTrackingChannel";
 
     Context context;
 
@@ -135,5 +147,50 @@ public class LocationMenager {
 
     private String getAverageSpeed(){
         return String.format("%.2f" ,(metersDriven / 1000) / (Car.time / 3600));
+    }
+
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        fusedLocationProviderClient.removeLocationUpdates(locationCallBack);
+    }
+
+    @SuppressLint("ForegroundServiceType")
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        createNotificationChannel();
+
+        Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
+                .setContentTitle("Tracking Location")
+                .setContentText("Your location is being tracked.")
+                .setSmallIcon(R.drawable.baseline_location_on_24)
+                .build();
+
+        startForeground(1, notification);
+
+        return START_STICKY;
+    }
+
+    private void createNotificationChannel() {
+        NotificationChannel channel = null;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            channel = new NotificationChannel(
+                    CHANNEL_ID,
+                    "Location Tracking Channel",
+                    NotificationManager.IMPORTANCE_LOW
+            );
+        }
+        NotificationManager manager = getSystemService(NotificationManager.class);
+        if (manager != null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                manager.createNotificationChannel(channel);
+            }
+        }
     }
 }

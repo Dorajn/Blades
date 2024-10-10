@@ -35,9 +35,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.Source;
 
-import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Deque;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -449,7 +447,7 @@ public class Car extends AppCompatActivity {
                             userData.update("fuelLevel", String.valueOf(fuelLeft));
                         }
 
-                        if(fuelLeft <= (double)LocalStorage.lowFuelWarning){
+                        if(fuelLeft <= (double)LocalStorage.LOW_FUEL_WARNING){
                             fuelChange.setImageResource(R.drawable.baseline_local_gas_station_24_red);
                         }
                         else{
@@ -925,7 +923,7 @@ public class Car extends AppCompatActivity {
                 Toast.makeText(view.getContext(), "Fuel level changed", Toast.LENGTH_SHORT).show();
                 vehicleFuelLevel.setText("Fuel: " + String.format("%.2f", temp));
 
-                if(Double.parseDouble(newFuelLevel) <= LocalStorage.lowFuelWarning){
+                if(Double.parseDouble(newFuelLevel) <= LocalStorage.LOW_FUEL_WARNING){
                     fuelChange.setImageResource(R.drawable.baseline_local_gas_station_24_red);
                 }
                 else{
