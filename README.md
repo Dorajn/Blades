@@ -8,6 +8,3 @@ Blades is an Android app for people who share one vehicle with others. Blades wi
 - calculating money spend on each drive
 - ability to add up to five members to your car
 
-
-App still in development.
-# Realase date: 2025
